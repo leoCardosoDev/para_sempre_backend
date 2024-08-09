@@ -14,5 +14,9 @@
     "atividades conjuntas"
   ],
   "author": "Leonardo Cardoso",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "typescript": "^5.5.4"
+  }
 }
