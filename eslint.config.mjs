@@ -31,6 +31,8 @@ export default [
     rules: {
       ...tsPlugin.configs.recommended.rules,
       "no-console": "warn",
+      "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "no-redeclare": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/strict-boolean-expressions": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
