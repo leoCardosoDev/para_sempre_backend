@@ -7,5 +7,5 @@ export type LoadAccountByEmailRepositoryResult = {
   id: string
   name: string
   password: string
-}
+} | null
 export type LoadAccountByTokenRepositoryResult = { id: string }
