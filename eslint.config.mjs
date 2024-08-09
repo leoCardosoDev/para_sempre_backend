@@ -6,6 +6,20 @@ import prettierConfig from "eslint-config-prettier";
 
 export default [
   {
+    ignores: [
+      "**/node_modules",
+      "**/dist",
+      "**/data",
+      "**/coverage",
+      "**/requirements",
+      "**/.vscode",
+      "**/.husky",
+      "**/jest.config.ts",
+      "**/jest-unit-config.ts",
+      "**/jest-integration-config.ts",
+      "**/tsconfig.json",
+      "**/globalConfig.json",
+  ],
     files: ["**/*.{js,mjs,cjs,ts}"],
     languageOptions: {
       parser: tsParser,
@@ -18,6 +32,15 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       "no-console": "warn",
       "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/comma-spacing": "off",
+      "@typescript-eslint/return-await": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/no-namespace": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "import/export": "off",
     },
   },
   {
