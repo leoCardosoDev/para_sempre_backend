@@ -8,4 +8,4 @@ export type LoadAccountByEmailRepositoryResult = {
   name: string
   password: string
 } | null
-export type LoadAccountByTokenRepositoryResult = { id: string }
+export type LoadAccountByTokenRepositoryResult = { id: string } | null
