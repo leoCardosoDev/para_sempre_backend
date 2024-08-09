@@ -1,6 +1,6 @@
 FROM node:latest
 
-WORKDIR /usr/src/clean-node-api
+WORKDIR /usr/src/casados-para-sempre
 
 # Adiciona a variável de ambiente para desativar o Husky
 ENV HUSKY_SKIP_INSTALL=1
