@@ -8,8 +8,8 @@ export default [
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
     languageOptions: {
-      globals: globals.browser,
       parser: tsParser,
+      globals: globals.browser,
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
@@ -18,13 +18,24 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       "no-console": "warn",
       "@typescript-eslint/explicit-module-boundary-types": "off",
-    }
+    },
+  },
+  {
+    files: ["**/*.spec.{js,ts}"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        ...globals.node,
+        ...globals.jest, // Inclui as variáveis globais do Jest
+      },
+    },
   },
   {
     files: ["**/*.js"],
     languageOptions: {
-      sourceType: "commonjs"
-    }
+      sourceType: "commonjs",
+      globals: globals.node, // Inclui as variáveis globais do Node.js
+    },
   },
   pluginJs.configs.recommended,
   prettierConfig,
