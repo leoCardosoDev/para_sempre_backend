@@ -1,6 +1,6 @@
 import { CreateAccount } from '@/domain/usecases'
-import { Hasher, CreateAccountRepository, CheckAccountByEmailRepository } from '@/application/protocols'
 import { CreateAccountParams, CreateAccountResult } from '@/domain/types'
+import { Hasher, CreateAccountRepository, CheckAccountByEmailRepository } from '@/application/protocols'
 
 export class DbCreateAccount implements CreateAccount {
   constructor(

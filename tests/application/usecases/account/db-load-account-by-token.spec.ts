@@ -1,6 +1,6 @@
 import { DbLoadAccountByToken } from '@/application/usecases'
-import { DecrypterSpy, LoadAccountByTokenRepositorySpy } from '@/tests/application/mocks'
 import { throwError } from '@/tests/domain/mocks'
+import { DecrypterSpy, LoadAccountByTokenRepositorySpy } from '@/tests/application/mocks'
 
 import { faker } from '@faker-js/faker'
 
