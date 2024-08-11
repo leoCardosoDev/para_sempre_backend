@@ -88,13 +88,13 @@ describe('AccountMongoRepository', () => {
   })
 
   describe('loadByToken()', () => {
-    let name = faker.person.firstName()
+    let name = faker.person.fullName()
     let email = faker.internet.email()
     let password = faker.internet.password()
     let accessToken = faker.string.uuid()
 
     beforeEach(() => {
-      name = faker.person.firstName()
+      name = faker.person.fullName()
       email = faker.internet.email()
       password = faker.internet.password()
       accessToken = faker.string.uuid()
