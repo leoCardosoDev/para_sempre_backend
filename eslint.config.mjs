@@ -40,7 +40,6 @@ export default [
       "@typescript-eslint/comma-spacing": "off",
       "@typescript-eslint/return-await": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/restrict-template-expressions": "off",
       "@typescript-eslint/no-misused-promises": "off",
       "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
@@ -53,7 +52,7 @@ export default [
       sourceType: "commonjs",
       globals: {
         ...globals.node,
-        ...globals.jest, // Inclui as variáveis globais do Jest
+        ...globals.jest,
       },
     },
   },
@@ -61,7 +60,7 @@ export default [
     files: ["**/*.js"],
     languageOptions: {
       sourceType: "commonjs",
-      globals: globals.node, // Inclui as variáveis globais do Node.js
+      globals: globals.node,
     },
   },
   pluginJs.configs.recommended,
