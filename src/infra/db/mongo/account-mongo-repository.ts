@@ -1,6 +1,6 @@
 import { MongoHelper } from '@/infra/db'
 import { CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckAccountByEmailRepository } from '@/application/protocols/db'
-import { ObjectId, OptionalId, Document } from 'mongodb'
+import { ObjectId, Document } from 'mongodb'
 import { CheckAccountByEmailRepositoryResult, CreateAccountRepositoryParams, LoadAccountByEmailRepositoryResult, LoadAccountByTokenRepositoryResult } from '@/application/types'
 
 export interface AccountDocument extends Document {
@@ -12,17 +12,8 @@ export interface AccountDocument extends Document {
 export class AccountMongoRepository implements CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckAccountByEmailRepository {
   async create(data: CreateAccountRepositoryParams): Promise<boolean> {
     const accountCollection = MongoHelper.getCollection('accounts')
-    const mappedData: OptionalId<AccountDocument> = this.mapToDocument(data)
-    const result = await accountCollection.insertOne(mappedData)
+    const result = await accountCollection.insertOne(data)
     return result.insertedId !== null
-  }
-
-  private mapToDocument(data: CreateAccountRepositoryParams): OptionalId<AccountDocument> {
-    return {
-      name: data.name,
-      email: data.email,
-      password: data.password
-    }
   }
 
   async loadByEmail(email: string): Promise<LoadAccountByEmailRepositoryResult> {
