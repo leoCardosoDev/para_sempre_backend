@@ -23,14 +23,25 @@ export default [
     files: ["**/*.{js,mjs,cjs,ts}"],
     languageOptions: {
       parser: tsParser,
-      globals: globals.browser,
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+        describe: "readonly",
+        document: "readonly",
+        window: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        test: "readonly",
+        process: "readonly",
+        __dirname: "readonly",
+      },
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
-      "no-console": "warn",
+      "no-console": "off",
       "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "no-redeclare": "off",
       "@typescript-eslint/no-unused-vars": "off",
