@@ -19,9 +19,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "src/**/*.ts",  // Inclui todos os arquivos TypeScript dentro de src
-    "tests/**/*.ts",  // Inclui todos os arquivos TypeScript dentro de tests
-  ],
-  "exclude": []  // Exclui a pasta node_modules e dist do processo de compilação
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
