@@ -19,8 +19,8 @@ export default [
       "**/jest-integration-config.ts",
       "**/tsconfig.json",
       "**/globalConfig.json",
-  ],
-    files: ["**/*.{js,mjs,cjs,ts}"],
+    ],
+    files: ["src/**/*.{js,mjs,cjs,ts}", "tests/**/*.{js,mjs,cjs,ts}"],
     languageOptions: {
       parser: tsParser,
       globals: {

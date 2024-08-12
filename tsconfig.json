@@ -2,14 +2,14 @@
   "compilerOptions": {
     "target": "ES2023",
     "module": "commonjs",
-    "outDir": "./dist",
+    "outDir": "./dist",  // Saída dos arquivos compilados
+    "rootDir": "./src",  // Define a raiz dos arquivos de entrada como 'src'
     "strict": true,
     "sourceMap": true,
-    "rootDirs": ["src", "tests"],
-    "baseUrl": "src",
+    "baseUrl": "./src",  // Ajusta o baseUrl para refletir a nova estrutura
     "paths": {
-      "@/tests/*": ["../tests/*"],
-      "@/*": ["*"]
+      "@/tests/*": ["../tests/*"],  // Mapeamento para testes
+      "@/*": ["*"]  // Mapeamento para arquivos dentro de src
     },
     "esModuleInterop": true,
     "strictNullChecks": true,
@@ -19,6 +19,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "tests", "jest.unit.config.ts", "jest.integration.config.ts", "jest.mongodb.config.ts", "commitlint.config.js"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts",  // Inclui todos os arquivos TypeScript dentro de src
+    "tests/**/*.ts",  // Inclui todos os arquivos TypeScript dentro de tests
+  ],
+  "exclude": []  // Exclui a pasta node_modules e dist do processo de compilação
 }
