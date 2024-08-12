@@ -13,13 +13,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    working_dir: /usr/src/clean-node-api
+    working_dir: /usr/src/casados-para-sempre
     restart: always
     environment:
       - HUSKY_SKIP_INSTALL=1
-      - MONGO_URL=mongodb://mongo:27017/clean-node-api
+      - MONGO_URL=mongodb://mongo:27017/casados-para-sempre
     volumes:
-      - ./dist/:/usr/src/clean-node-api/dist/
+      - ./dist/:/usr/src/casados-para-sempre/dist/
     ports:
       - "5050:5050"
       - "9222:9222"
