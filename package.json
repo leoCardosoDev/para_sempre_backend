@@ -1,6 +1,6 @@
 {
   "name": "casados-para-sempre",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Aplicação para ajudar casais a fortalecerem seus relacionamentos.",
   "main": "src/index.js",
   "scripts": {
