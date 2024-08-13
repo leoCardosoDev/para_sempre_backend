@@ -3,7 +3,7 @@
     "target": "ES2023",
     "module": "commonjs",
     "outDir": "./dist",  // Saída dos arquivos compilados
-    "rootDir": "./src",  // Define a raiz dos arquivos de entrada como 'src'
+    "rootDir": ".",  // Define a raiz dos arquivos de entrada como 'src'
     "strict": true,
     "sourceMap": true,
     "baseUrl": "./src",  // Ajusta o baseUrl para refletir a nova estrutura
