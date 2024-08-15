@@ -37,14 +37,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  test('Should return 500 if AddAccount throws', async () => {
+  test('Should return 500 if CreateAccount throws', async () => {
     const { sut, createAccountSpy } = makeSut()
     jest.spyOn(createAccountSpy, 'create').mockImplementationOnce(throwError)
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new ServerError('No stack trace available')))
   })
 
-  test('Should call AddAccount with correct values', async () => {
+  test('Should call CreateAccount with correct values', async () => {
     const { sut, createAccountSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
@@ -55,7 +55,7 @@ describe('SignUp Controller', () => {
     })
   })
 
-  test('Should return 403 if AddAccount returns false', async () => {
+  test('Should return 403 if CreateAccount returns false', async () => {
     const { sut, createAccountSpy } = makeSut()
     createAccountSpy.result = false
     const httpResponse = await sut.handle(mockRequest())
