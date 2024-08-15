@@ -29,13 +29,13 @@ export class AuthenticationSpy implements Authentication {
 export class LoadAccountByTokenSpy implements LoadAccountByToken {
   accessToken: string
   role?: string
-  result = {
+  result: {id: string } | null = {
     id: faker.string.uuid()
   }
 
   async load (accessToken: string, role?: string): Promise<LoadAccountByTokenResult> {
     this.accessToken = accessToken
     this.role = role
-    return this.result
+    return this.result ?? null
   }
 }
