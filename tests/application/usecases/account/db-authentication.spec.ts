@@ -90,13 +90,9 @@ describe('DbAuthentication UseCase', () => {
   it('Should return data on success', async () => {
     const { sut, encrypterSpy, loadAccountByEmailRepositorySpy } = makeSut()
     const result = await sut.auth(mockAuthenticationParams())
-    if (result) {
-      const { accessToken, name } = result
-      expect(accessToken).toBe(encrypterSpy.ciphertext)
-      expect(name).toBe(loadAccountByEmailRepositorySpy.result?.name)
-    } else {
-      throwError()
-    }
+    const { accessToken, name } = result!
+    expect(accessToken).toBe(encrypterSpy.ciphertext)
+    expect(name).toBe(loadAccountByEmailRepositorySpy.result!.name)
   })
 
   it('Should call UpdateAccessTokenRepository with correct values', async () => {
