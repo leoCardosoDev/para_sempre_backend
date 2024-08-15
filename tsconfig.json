@@ -2,14 +2,14 @@
   "compilerOptions": {
     "target": "ES2023",
     "module": "commonjs",
-    "outDir": "./dist",  // Saída dos arquivos compilados
-    "rootDir": ".",  // Define a raiz dos arquivos de entrada como 'src'
+    "outDir": "./dist",
+    "rootDir": ".",
     "strict": true,
     "sourceMap": true,
-    "baseUrl": "./src",  // Ajusta o baseUrl para refletir a nova estrutura
+    "baseUrl": "./src",
     "paths": {
-      "@/tests/*": ["../tests/*"],  // Mapeamento para testes
-      "@/*": ["*"]  // Mapeamento para arquivos dentro de src
+      "@/tests/*": ["../tests/*"],
+      "@/*": ["*"]
     },
     "esModuleInterop": true,
     "strictNullChecks": true,
