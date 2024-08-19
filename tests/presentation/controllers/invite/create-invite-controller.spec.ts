@@ -1,7 +1,8 @@
 import { CreateInvite } from '@/domain/usecases/invite'
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
-import { badRequest } from '@/presentation/helpers'
+import { badRequest, serverError } from '@/presentation/helpers'
+import { throwError } from '@/tests/domain/mocks'
 import { CreateInviteSpy, ValidationSpy } from '@/tests/presentation/mocks'
 
 import { faker } from '@faker-js/faker'
@@ -69,4 +70,11 @@ describe('CreateInvite Controller', () => {
     expect(createSpy).toHaveBeenCalledWith({...request, usedAt: null})
   })
 
+  it('should returns 500 if CreateInvite throws', async () => {
+    const { sut, createInviteSpy } = makeSut()
+    jest.spyOn(createInviteSpy, 'create').mockImplementationOnce(throwError)
+    const request = mockRequest()
+    const promise = await sut.handle(request)
+    expect(promise).toEqual(serverError(new Error()))
+  })
 })
