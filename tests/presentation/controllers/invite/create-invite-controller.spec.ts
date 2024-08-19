@@ -1,7 +1,7 @@
 import { CreateInvite } from '@/domain/usecases/invite'
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { throwError } from '@/tests/domain/mocks'
 import { CreateInviteSpy, ValidationSpy } from '@/tests/presentation/mocks'
 
@@ -76,5 +76,12 @@ describe('CreateInvite Controller', () => {
     const request = mockRequest()
     const promise = await sut.handle(request)
     expect(promise).toEqual(serverError(new Error()))
+  })
+
+  it('should returns 200 on success', async () => {
+    const { sut } = makeSut()
+    const request = mockRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(ok(true))
   })
 })
