@@ -1,6 +1,6 @@
 import { CreateInvite } from '@/domain/usecases/invite'
 import { InvalidParamError } from '@/presentation/errors'
-import { badRequest } from '@/presentation/helpers'
+import { badRequest, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class CreateInviteController implements Controller {
@@ -10,16 +10,20 @@ export class CreateInviteController implements Controller {
   ) {}
 
   async handle(request: CreateInviteControllerParams): Promise<HttpResponse> {
-    const error = this._validation.validate(request)
-    if (error) {
-      return badRequest(error)
+    try {
+      const error = this._validation.validate(request)
+      if (error) {
+        return badRequest(error)
+      }
+      if (request.expiration <= request.createdAt) {
+        return badRequest(new InvalidParamError('expiration must be greater than createdAt'))
+      }
+      const inviteData = { ...request, usedAt: null }
+      await this._createInvite.create(inviteData)
+      return { body: {}, statusCode: 204 }
+    } catch (error) {
+      return serverError(error as Error)
     }
-    if (request.expiration <= request.createdAt) {
-      return badRequest(new InvalidParamError('expiration must be greater than createdAt'))
-    }
-    const inviteData = { ...request, usedAt: null }
-    await this._createInvite.create(inviteData)
-    return { body: {}, statusCode: 204 }
   }
 }
 
