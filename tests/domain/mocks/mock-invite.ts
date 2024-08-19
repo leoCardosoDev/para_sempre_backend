@@ -9,3 +9,5 @@ export class CreateInviteSpy implements CreateInvite {
     return this.result
   }
 }
+
+
