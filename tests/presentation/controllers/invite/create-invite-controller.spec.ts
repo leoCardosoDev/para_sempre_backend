@@ -3,7 +3,8 @@ import { CreateInviteController, CreateInviteControllerParams } from '@/presenta
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { throwError } from '@/tests/domain/mocks'
-import { CreateInviteSpy, ValidationSpy } from '@/tests/presentation/mocks'
+import { ValidationSpy } from '@/tests/presentation/mocks'
+import { CreateInviteSpy } from '@/tests/domain/mocks'
 
 import { faker } from '@faker-js/faker'
 
