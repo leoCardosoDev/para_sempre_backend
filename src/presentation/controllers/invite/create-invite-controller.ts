@@ -1,6 +1,6 @@
 import { CreateInvite } from '@/domain/usecases/invite'
 import { InvalidParamError } from '@/presentation/errors'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class CreateInviteController implements Controller {
@@ -19,8 +19,8 @@ export class CreateInviteController implements Controller {
         return badRequest(new InvalidParamError('expiration must be greater than createdAt'))
       }
       const inviteData = { ...request, usedAt: null }
-      await this._createInvite.create(inviteData)
-      return { body: {}, statusCode: 204 }
+      const result = await this._createInvite.create(inviteData)
+      return ok(result)
     } catch (error) {
       return serverError(error as Error)
     }
