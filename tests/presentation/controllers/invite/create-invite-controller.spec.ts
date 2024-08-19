@@ -1,6 +1,6 @@
 import { CreateInvite } from '@/domain/usecases/invite'
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
-import { MissingParamError } from '@/presentation/errors'
+import { InvalidParamError, MissingParamError } from '@/presentation/errors'
 import { badRequest } from '@/presentation/helpers'
 import { CreateInviteSpy, ValidationSpy } from '@/tests/presentation/mocks'
 
@@ -53,6 +53,14 @@ describe('CreateInvite Controller', () => {
     expect(httpResponse).toEqual(badRequest(validationSpy.error))
   })
 
+  it('should return 400 if expiration date is earlier than createdAt date', async () => {
+    const { sut } = makeSut()
+    const pastDate = faker.date.past()
+    const request = mockRequest(pastDate)
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('expiration must be greater than createdAt')))
+  })
+
   it('should call CreateInvite with correct values', async () => {
     const { sut, createInviteSpy } = makeSut()
     const createSpy = jest.spyOn(createInviteSpy, 'create')
@@ -60,4 +68,5 @@ describe('CreateInvite Controller', () => {
     await sut.handle(request)
     expect(createSpy).toHaveBeenCalledWith({...request, usedAt: null})
   })
+
 })

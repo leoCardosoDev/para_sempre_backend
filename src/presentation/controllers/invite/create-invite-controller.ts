@@ -19,7 +19,7 @@ export class CreateInviteController implements Controller {
     }
     const inviteData = { ...request, usedAt: null }
     await this._createInvite.create(inviteData)
-    return new Promise(resolve => resolve({ body: {}, statusCode: 204 }))
+    return { body: {}, statusCode: 204 }
   }
 }
 
