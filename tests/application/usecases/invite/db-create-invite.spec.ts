@@ -4,6 +4,7 @@ import { CreateInviteRepository } from '@/application/protocols/db/invite'
 import { CreateInviteRepositorySpy } from '@/tests/application/mocks'
 
 import { faker } from '@faker-js/faker'
+import { throwError } from '@/tests/domain/mocks'
 
 const mockInviteData = (): CreateInviteParams => ({
   inviteId: faker.string.uuid(),
@@ -39,5 +40,13 @@ describe('DbCreateInvite Usecase', () => {
     const inviteData = mockInviteData()
     await sut.create(inviteData)
     expect(createSpy).toHaveBeenCalledWith(inviteData)
+  })
+
+  it('should throws if CreateInviteRepository throws', async () => {
+    const { sut, createInviteRepositorySpy } = makeSut()
+    jest.spyOn(createInviteRepositorySpy, 'create').mockImplementationOnce(throwError)
+    const inviteData = mockInviteData()
+    const promise = sut.create(inviteData)
+    await expect(promise).rejects.toThrow()
   })
 })
