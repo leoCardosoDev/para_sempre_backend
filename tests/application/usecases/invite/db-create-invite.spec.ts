@@ -49,4 +49,11 @@ describe('DbCreateInvite Usecase', () => {
     const promise = sut.create(inviteData)
     await expect(promise).rejects.toThrow()
   })
+
+  it('should return true on success', async () => {
+    const { sut } = makeSut()
+    const inviteData = mockInviteData()
+    const result = await sut.create(inviteData)
+    expect(result).toBe(true)
+  })
 })
