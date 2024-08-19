@@ -1,27 +1,34 @@
+import { CreateInvite } from '@/domain/usecases/invite'
 import { badRequest } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class CreateInviteController implements Controller {
-  constructor(private readonly _validation: Validation) {}
+  constructor(
+    private readonly _validation: Validation,
+    private readonly _createInvite: CreateInvite
+  ) {}
+
   async handle(request: CreateInviteControllerParams): Promise<HttpResponse> {
     const error = this._validation.validate(request)
     if (error) {
       return badRequest(error)
     }
-    return new Promise(resolve => resolve({ body: {}, statusCode: 0 }))
+    const inviteData = { ...request, usedAt: null }
+    await this._createInvite.create(inviteData)
+    return new Promise(resolve => resolve({ body: {}, statusCode: 204 }))
   }
 }
 
 export type CreateInviteControllerParams = {
-  invite_id: string
-  admin_id: string
-  invite_code: string
-  email_user: string
-  phone_user: string
+  inviteId: string
+  adminId: string
+  inviteCode: string
+  emailUser: string
+  phoneUser: string
   status: string
-  invite_type: string
-  created_at: Date
+  inviteType: string
+  createdAt: Date
   expiration: Date
-  used_at: string | null
-  max_uses: number
+  usedAt: Date | null
+  maxUses: number
 }
