@@ -1,1 +1,1 @@
-export * from './create-invite'
+export * from './create-invite-controller'
