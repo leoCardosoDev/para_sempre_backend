@@ -1,4 +1,6 @@
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
+import { MissingParamError } from '@/presentation/errors'
+import { badRequest } from '@/presentation/helpers'
 import { ValidationSpy } from '@/tests/presentation/mocks'
 
 import { faker } from '@faker-js/faker'
@@ -37,5 +39,13 @@ describe('CreateInvite Controller', () => {
     const request = mockRequest()
     await sut.handle(request)
     expect(validationSpy.input).toEqual(request)
+  })
+
+  it('should return 400 if Validation fails', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new MissingParamError(faker.lorem.word())
+    const request = mockRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(badRequest(validationSpy.error))
   })
 })
