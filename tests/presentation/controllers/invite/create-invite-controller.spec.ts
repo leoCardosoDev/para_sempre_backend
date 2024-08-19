@@ -1,9 +1,9 @@
-import { CreateInviteController } from '@/presentation/controllers/invite'
-import { Validation } from '@/presentation/protocols'
+import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
+import { ValidationSpy } from '@/tests/presentation/mocks'
+
 import { faker } from '@faker-js/faker'
 
-const mockFakeRequest = (): any => ({
-  body: {
+const mockRequest = (): CreateInviteControllerParams => ({
     invite_id: faker.string.uuid(),
     admin_id: faker.string.uuid(),
     invite_code: faker.string.uuid(),
@@ -15,21 +15,27 @@ const mockFakeRequest = (): any => ({
     expiration: faker.date.future(),
     used_at: null,
     max_uses: faker.number.int({min: 0, max: 1})
-  }
 })
+
+type SutTypes = {
+  sut: CreateInviteController,
+  validationSpy: ValidationSpy
+}
+
+const makeSut = (): SutTypes => {
+  const validationSpy = new ValidationSpy()
+  const sut = new CreateInviteController(validationSpy)
+  return {
+    sut,
+    validationSpy
+  }
+}
 
 describe('CreateInvite Controller', () => {
   it('should call Validation with correct values', async () => {
-    class ValidationStub implements Validation {
-      validate (_input: any): Error | null {
-        return null
-      }
-    }
-    const validationStub = new ValidationStub()
-    const validationSpy = jest.spyOn(validationStub, 'validate')
-    const sut = new CreateInviteController(validationStub)
-    const httpRequest = mockFakeRequest()
-    await sut.handle(httpRequest)
-    expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
+    const { sut, validationSpy } = makeSut()
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(validationSpy.input).toEqual(request)
   })
 })
