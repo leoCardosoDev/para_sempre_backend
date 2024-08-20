@@ -1,7 +1,6 @@
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 import { badRequest, serverError, unauthorized, ok } from '@/presentation/helpers'
 import { Authentication } from '@/domain/usecases'
-import { LoginControllerRequest } from './types'
 
 export class LoginController implements Controller {
   constructor(
@@ -24,4 +23,9 @@ export class LoginController implements Controller {
       return serverError(error as Error)
     }
   }
+}
+
+export type LoginControllerRequest = {
+  email: string
+  password: string
 }

@@ -2,7 +2,6 @@ import { Middleware, HttpResponse } from '@/presentation/protocols'
 import { forbidden, ok, serverError } from '@/presentation/helpers'
 import { AccessDeniedError } from '@/presentation/errors'
 import { LoadAccountByToken } from '@/domain/usecases'
-import { AuthMiddlewareRequest } from './types'
 
 export class AuthMiddleware implements Middleware {
   constructor(
@@ -24,4 +23,8 @@ export class AuthMiddleware implements Middleware {
       return serverError(error as Error)
     }
   }
+}
+
+export type AuthMiddlewareRequest = {
+  accessToken?: string
 }

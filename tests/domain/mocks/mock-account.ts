@@ -1,5 +1,4 @@
-import { AuthenticationParams, CreateAccountParams } from '@/domain/types'
-
+import { AuthenticationParams, CreateAccountParams } from '@/domain/usecases'
 import { faker } from '@faker-js/faker'
 
 export const mockAccountParams = (): CreateAccountParams => ({

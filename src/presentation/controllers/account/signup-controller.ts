@@ -2,7 +2,6 @@ import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 import { badRequest, serverError, ok, forbidden } from '@/presentation/helpers'
 import { EmailInUseError } from '@/presentation/errors'
 import { CreateAccount, Authentication } from '@/domain/usecases'
-import { SignUpControllerRequest } from './types'
 
 export class SignUpController implements Controller {
   constructor(
@@ -35,4 +34,11 @@ export class SignUpController implements Controller {
       return serverError(error as Error)
     }
   }
+}
+
+export type SignUpControllerRequest = {
+  name: string
+  email: string
+  password: string
+  passwordConfirmation: string
 }
