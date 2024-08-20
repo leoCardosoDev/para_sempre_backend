@@ -2,6 +2,7 @@ import { Collection } from 'mongodb'
 import { MongoHelper } from '@/infra/db/mongo/mongo-helper'
 import { AccountMongoRepository } from '@/infra/db/mongo/account-mongo-repository'
 import { mockAccountParams } from '@/tests/domain/mocks'
+
 import { faker } from '@faker-js/faker'
 
 const makeSut = (): AccountMongoRepository => {
