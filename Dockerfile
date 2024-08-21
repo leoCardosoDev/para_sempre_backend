@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:22.5.1
 
 WORKDIR /usr/src/casados-para-sempre
 

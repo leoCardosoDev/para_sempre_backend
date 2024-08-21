@@ -3,7 +3,6 @@ import { MongoHelper } from '@/infra/db'
 import { setupApp } from '@/main/config/app'
 
 import { sign } from 'jsonwebtoken'
-
 import { Collection } from 'mongodb'
 import { Express } from 'express'
 import request from 'supertest'
