@@ -15,4 +15,8 @@ export type CreateInviteParams = {
   maxUses: number
 }
 
-export type CreateInviteResult = boolean
+export type CreateInviteResult = {
+  inviteCode: string
+  status: string
+  expiration: Date
+} | null

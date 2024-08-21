@@ -1,8 +1,6 @@
 import { CreateInviteParams } from '@/domain/usecases/invite'
 import { DbCreateInvite } from '@/application/usecases/invite'
-import { CreateInviteRepository } from '@/application/protocols/db/invite'
-import { CreateInviteRepositorySpy } from '@/tests/application/mocks'
-
+import { CreateInviteRepositorySpy, EncrypterSpy } from '@/tests/application/mocks'
 import { faker } from '@faker-js/faker'
 import { throwError } from '@/tests/domain/mocks'
 
@@ -21,27 +19,34 @@ const mockInviteData = (): CreateInviteParams => ({
 
 type SutTypes = {
   sut: DbCreateInvite
-  createInviteRepositorySpy: CreateInviteRepository
+  createInviteRepositorySpy: CreateInviteRepositorySpy
+  encrypterSpy: EncrypterSpy
 }
 
 const makeSut = (): SutTypes => {
   const createInviteRepositorySpy = new CreateInviteRepositorySpy()
-  const sut = new DbCreateInvite(createInviteRepositorySpy)
+  const encrypterSpy = new EncrypterSpy()
+  const sut = new DbCreateInvite(createInviteRepositorySpy, encrypterSpy)
   return {
-    sut, createInviteRepositorySpy
+    sut,
+    createInviteRepositorySpy,
+    encrypterSpy
   }
 }
 
 describe('DbCreateInvite Usecase', () => {
   it('should call CreateInviteRepository with correct values', async () => {
-    const { sut, createInviteRepositorySpy } = makeSut()
+    const { sut, createInviteRepositorySpy, encrypterSpy } = makeSut()
     const createSpy = jest.spyOn(createInviteRepositorySpy, 'create')
     const inviteData = mockInviteData()
     await sut.create(inviteData)
-    expect(createSpy).toHaveBeenCalledWith(inviteData)
+    expect(createSpy).toHaveBeenCalledWith({
+      ...inviteData,
+      inviteCode: encrypterSpy.ciphertext // mockado no EncrypterSpy
+    })
   })
 
-  it('should throws if CreateInviteRepository throws', async () => {
+  it('should throw if CreateInviteRepository throws', async () => {
     const { sut, createInviteRepositorySpy } = makeSut()
     jest.spyOn(createInviteRepositorySpy, 'create').mockImplementationOnce(throwError)
     const inviteData = mockInviteData()
@@ -49,10 +54,22 @@ describe('DbCreateInvite Usecase', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  it('should call Encrypter with correct emailUser', async () => {
+    const { sut, encrypterSpy } = makeSut()
+    const encryptSpy = jest.spyOn(encrypterSpy, 'encrypt')
+    const inviteData = mockInviteData()
+    await sut.create(inviteData)
+    expect(encryptSpy).toHaveBeenCalledWith(inviteData.emailUser)
+  })
+
   it('should return true on success', async () => {
     const { sut } = makeSut()
     const inviteData = mockInviteData()
     const result = await sut.create(inviteData)
-    expect(result).toBe(true)
+    expect(result).toEqual({
+      inviteCode: inviteData.inviteCode,
+      status: inviteData.status,
+      expiration: inviteData.expiration
+    })
   })
 })

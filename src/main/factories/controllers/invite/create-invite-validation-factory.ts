@@ -4,7 +4,7 @@ import { EmailValidation, RequiredFieldValidation, ValidationComposite } from '@
 
 export const makeCreateInviteValidation = (): ValidationComposite => {
   const validations: Validation[] = []
-  for (const field of ['accountId', 'inviteCode', 'emailUser', 'phoneUser', 'status', 'inviteType', 'createdAt', 'expiration', 'maxUses']) {
+  for (const field of ['emailUser', 'phoneUser', 'status', 'inviteType', 'createdAt', 'expiration', 'maxUses']) {
     validations.push(new RequiredFieldValidation(field))
   }
   validations.push(new EmailValidation('emailUser', new EmailValidatorAdapter()))

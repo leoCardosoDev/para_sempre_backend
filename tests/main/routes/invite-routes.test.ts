@@ -54,8 +54,6 @@ describe('Invite Routes', () => {
       await request(app)
         .post('/api/invites')
         .send({
-          accountId: '1',
-          inviteCode: '1234',
           emailUser: 'leo@gmail.com',
           phoneUser: '00000000000',
           status: 'created',
@@ -73,8 +71,6 @@ describe('Invite Routes', () => {
         .post('/api/invites')
         .set('x-access-token', accessToken)
         .send({
-          accountId: '1',
-          inviteCode: '1234',
           emailUser: 'leo@gmail.com',
           phoneUser: '00000000000',
           status: 'created',

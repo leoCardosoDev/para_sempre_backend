@@ -3,6 +3,11 @@ import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite
 
 export class CreateInviteRepositorySpy implements CreateInviteRepository {
   async create (_invateData: CreateInviteParams): Promise<CreateInviteResult> {
-    return new Promise(resolve => resolve(true))
+    const result = {
+      inviteCode: _invateData.inviteCode,
+      status: _invateData.status,
+      expiration: _invateData.expiration
+    }
+    return new Promise(resolve => resolve(result))
   }
 }

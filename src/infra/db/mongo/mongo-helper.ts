@@ -26,7 +26,7 @@ export const MongoHelper = {
 
   map: <T extends Document>(data: T): any => {
     const { _id, ...rest } = data
-    return { ...rest, id: _id.toHexString() }
+    return { ...rest, id: _id ? _id.toHexString() : null }
   },
 
   mapCollection: <T extends Document>(collection: T[]): any[] => {

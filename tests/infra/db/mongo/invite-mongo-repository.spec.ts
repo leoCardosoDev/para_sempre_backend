@@ -40,5 +40,6 @@ describe('Invite Mongo Repository', () => {
     })
     const invite = await inviteCollection.findOne({ accountId: 'any_account_id', })
     expect(invite).toBeTruthy()
+    expect(invite?._id).toBeTruthy()
   })
 })

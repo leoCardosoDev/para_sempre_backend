@@ -1,4 +1,3 @@
-import { CreateInvite } from '@/domain/usecases/invite'
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
@@ -24,7 +23,7 @@ const mockRequest = (expirationDate?: Date, accountId?: string): CreateInviteCon
 type SutTypes = {
   sut: CreateInviteController,
   validationSpy: ValidationSpy,
-  createInviteSpy: CreateInvite
+  createInviteSpy: CreateInviteSpy
 }
 
 const makeSut = (): SutTypes => {
@@ -82,6 +81,10 @@ describe('CreateInvite Controller', () => {
     const { sut } = makeSut()
     const request = mockRequest()
     const httpResponse = await sut.handle(request)
-    expect(httpResponse).toEqual(ok(true))
+    expect(httpResponse).toEqual(ok({
+      "inviteCode": 'any_invite_code',
+      "status": 'any_status',
+      "expiration": new Date('2025-01-29T01:29:12.841Z')
+    }))
   })
 })
