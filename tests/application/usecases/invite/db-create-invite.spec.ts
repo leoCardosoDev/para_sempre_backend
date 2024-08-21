@@ -7,8 +7,7 @@ import { faker } from '@faker-js/faker'
 import { throwError } from '@/tests/domain/mocks'
 
 const mockInviteData = (): CreateInviteParams => ({
-  inviteId: faker.string.uuid(),
-  adminId: faker.string.uuid(),
+  accountId: faker.string.uuid(),
   inviteCode: faker.string.uuid(),
   emailUser: faker.internet.email(),
   phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),

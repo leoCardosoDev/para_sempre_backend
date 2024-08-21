@@ -8,18 +8,17 @@ import { CreateInviteSpy } from '@/tests/domain/mocks'
 
 import { faker } from '@faker-js/faker'
 
-const mockRequest = (expirationDate?: Date): CreateInviteControllerParams => ({
-    inviteId: faker.string.uuid(),
-    adminId: faker.string.uuid(),
-    inviteCode: faker.string.uuid(),
-    emailUser: faker.internet.email(),
-    phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
-    status: faker.word.sample(),
-    inviteType: faker.word.sample(),
-    createdAt: faker.date.recent(),
-    expiration: expirationDate || faker.date.future(),
-    usedAt: null,
-    maxUses: faker.number.int({min: 0, max: 1})
+const mockRequest = (expirationDate?: Date, accountId?: string): CreateInviteControllerParams => ({
+  accountId: accountId || faker.string.uuid(),
+  inviteCode: faker.string.uuid(),
+  emailUser: faker.internet.email(),
+  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
+  status: faker.word.sample(),
+  inviteType: faker.word.sample(),
+  createdAt: faker.date.recent(),
+  expiration: expirationDate || faker.date.future(),
+  usedAt: null,
+  maxUses: faker.number.int({ min: 0, max: 1 }),
 })
 
 type SutTypes = {

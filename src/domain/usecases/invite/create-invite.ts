@@ -3,8 +3,7 @@ export interface CreateInvite {
 }
 
 export type CreateInviteParams = {
-  inviteId: string
-  adminId: string
+  accountId: string
   inviteCode: string
   emailUser: string
   phoneUser: string

@@ -18,7 +18,7 @@ export class CreateInviteController implements Controller {
       if (request.expiration <= request.createdAt) {
         return badRequest(new InvalidParamError('expiration must be greater than createdAt'))
       }
-      const inviteData = { ...request, usedAt: null }
+      const inviteData = { ...request, accountId: request.accountId, usedAt: null }
       const result = await this._createInvite.create(inviteData)
       return ok(result)
     } catch (error) {
@@ -28,8 +28,7 @@ export class CreateInviteController implements Controller {
 }
 
 export type CreateInviteControllerParams = {
-  inviteId: string
-  adminId: string
+  accountId: string
   inviteCode: string
   emailUser: string
   phoneUser: string

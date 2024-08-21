@@ -27,8 +27,7 @@ describe('Invite Mongo Repository', () => {
   it('should create invite on success', async () => {
     const sut = makeSut()
     await sut.create({
-      inviteId: 'any_id',
-      adminId: faker.string.uuid(),
+      accountId: 'any_account_id',
       inviteCode: faker.string.uuid(),
       emailUser: faker.internet.email(),
       phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
@@ -39,7 +38,7 @@ describe('Invite Mongo Repository', () => {
       usedAt: null,
       maxUses: faker.number.int({min: 0, max: 1})
     })
-    const invite = await inviteCollection.findOne({ inviteId: 'any_id' })
+    const invite = await inviteCollection.findOne({ accountId: 'any_account_id', })
     expect(invite).toBeTruthy()
   })
 })

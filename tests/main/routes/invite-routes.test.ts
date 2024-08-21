@@ -54,8 +54,7 @@ describe('Invite Routes', () => {
       await request(app)
         .post('/api/invites')
         .send({
-          inviteId: '1',
-          adminId: '1',
+          accountId: '1',
           inviteCode: '1234',
           emailUser: 'leo@gmail.com',
           phoneUser: '00000000000',
@@ -74,8 +73,7 @@ describe('Invite Routes', () => {
         .post('/api/invites')
         .set('x-access-token', accessToken)
         .send({
-          inviteId: '1',
-          adminId: '1',
+          accountId: '1',
           inviteCode: '1234',
           emailUser: 'leo@gmail.com',
           phoneUser: '00000000000',
