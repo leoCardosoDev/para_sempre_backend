@@ -1,5 +1,5 @@
 export interface LoadInviteByCode {
-  loadByCode: (_params: LoadInviteByCodeParams) => Promise<LoadInviteByCodeResult>
+  load: (_params: LoadInviteByCodeParams) => Promise<LoadInviteByCodeResult>
 }
 
 export type LoadInviteByCodeParams = {
