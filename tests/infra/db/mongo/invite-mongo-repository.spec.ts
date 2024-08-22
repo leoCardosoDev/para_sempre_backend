@@ -24,22 +24,24 @@ describe('Invite Mongo Repository', () => {
     await inviteCollection.deleteMany({})
   })
 
-  it('should create invite on success', async () => {
-    const sut = makeSut()
-    await sut.create({
-      accountId: 'any_account_id',
-      inviteCode: faker.string.uuid(),
-      emailUser: faker.internet.email(),
-      phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
-      status: faker.word.sample(),
-      inviteType: faker.word.sample(),
-      createdAt: faker.date.recent(),
-      expiration: faker.date.future(),
-      usedAt: null,
-      maxUses: faker.number.int({min: 0, max: 1})
+  describe('create()', () => {
+    it('should create invite on success', async () => {
+      const sut = makeSut()
+      await sut.create({
+        accountId: 'any_account_id',
+        inviteCode: faker.string.uuid(),
+        emailUser: faker.internet.email(),
+        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
+        status: faker.word.sample(),
+        inviteType: faker.word.sample(),
+        createdAt: faker.date.recent(),
+        expiration: faker.date.future(),
+        usedAt: null,
+        maxUses: faker.number.int({min: 0, max: 1})
+      })
+      const invite = await inviteCollection.findOne({ accountId: 'any_account_id', })
+      expect(invite).toBeTruthy()
+      expect(invite?._id).toBeTruthy()
     })
-    const invite = await inviteCollection.findOne({ accountId: 'any_account_id', })
-    expect(invite).toBeTruthy()
-    expect(invite?._id).toBeTruthy()
   })
 })
