@@ -33,6 +33,13 @@ describe('DbLoadInviteByCode Usecases', () => {
     expect(decrypterSpy.ciphertext).toBe(encryptedCode)
   })
 
+  it('should returns null if Decrypter null', async () => {
+    const { sut, decrypterSpy } = makeSut()
+    decrypterSpy.decrypt = jest.fn().mockResolvedValueOnce(null)
+    const invite = await sut.load({ inviteCode: encryptedCode })
+    expect(invite).toBeNull()
+  })
+
   it('should call LoadInviteByCodeRepository with correct values with correct ciphertext', async () => {
     const { sut, loadInviteByCodeSpy } = makeSut()
     await sut.load({ inviteCode: encryptedCode })

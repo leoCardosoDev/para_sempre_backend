@@ -7,6 +7,7 @@ export class DbLoadInviteByCode implements LoadInviteByCode {
     private readonly _decrypter: Decrypter,
     private readonly _loadByCodeRepository: LoadInviteByCodeRepository
   ) {}
+
   async load(_params: LoadInviteByCodeParams): Promise<LoadInviteByCodeResult> {
     await this._decrypter.decrypt(_params.inviteCode)
     await this._loadByCodeRepository.loadByCode(_params)
