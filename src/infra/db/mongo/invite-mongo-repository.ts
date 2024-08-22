@@ -6,10 +6,7 @@ export class InviteMongoRepository implements CreateInviteRepository {
   async create(_inviteData: CreateInviteParams): Promise<CreateInviteResult> {
     const inviteCollection = await MongoHelper.getCollection('invites')
     const result = await inviteCollection.insertOne(_inviteData)
-    if (result.insertedId) {
-      const inviteWithId = { ..._inviteData, _id: result.insertedId }
-      return MongoHelper.map(inviteWithId)
-    }
-    return null
+    const inviteWithId = { ..._inviteData, _id: result.insertedId }
+    return MongoHelper.map(inviteWithId)
   }
 }
