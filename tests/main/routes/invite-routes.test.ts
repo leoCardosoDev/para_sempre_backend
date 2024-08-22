@@ -50,7 +50,7 @@ describe('Invite Routes', () => {
   })
 
   describe('POST /invites', () => {
-    test('Should return 403 on create invite without accessToken', async () => {
+    it('Should return 403 on create invite without accessToken', async () => {
       await request(app)
         .post('/api/invites')
         .send({
@@ -65,7 +65,7 @@ describe('Invite Routes', () => {
         .expect(403)
     })
 
-    test('Should return 200 on invite', async () => {
+    it('Should return 200 on invite', async () => {
       const accessToken = await mockAccessToken()
       await request(app)
         .post('/api/invites')

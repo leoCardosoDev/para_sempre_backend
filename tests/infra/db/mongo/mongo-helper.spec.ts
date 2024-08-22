@@ -25,7 +25,7 @@ describe('MongoHelper', () => {
 
   describe('disconnect()', () => {
 
-    test('Should call close on client', async () => {
+    it('Should call close on client', async () => {
       const closeMock = jest.fn().mockResolvedValue(Promise.resolve())
       sut.client = { close: closeMock } as unknown as MongoClient
       await sut.disconnect();
@@ -33,21 +33,21 @@ describe('MongoHelper', () => {
       expect(sut.client).toBeNull();
     });
 
-    test('Should not throw error if client is null', async () => {
+    it('Should not throw error if client is null', async () => {
       sut.client = null as any;
       await expect(sut.disconnect()).resolves.toBeUndefined();
     });
   });
 
   describe('getCollection()', () => {
-    test('Should throw an error if client is not connected', () => {
+    it('Should throw an error if client is not connected', () => {
       sut.client = null as any
       expect(() => sut.getCollection('any_collection')).toThrow(new Error('Client is not connected'))
     });
   });
 
   describe('mapCollection()', () => {
-    test('Should call map for each document in the collection', () => {
+    it('Should call map for each document in the collection', () => {
       const document1 = { _id: new ObjectId(), name: 'John Doe', email: 'john@example.com', password: 'password' };
       const document2 = { _id: new ObjectId(), name: 'Jane Doe', email: 'jane@example.com', password: 'password' };
       const collection = [document1, document2];

@@ -31,7 +31,7 @@ describe('AccountMongoRepository', () => {
   })
 
   describe('create()', () => {
-    test('Should return an account on success', async () => {
+    it('Should return an account on success', async () => {
       const sut = makeSut()
       const createAccountParams = mockAccountParams()
       const isValid = await sut.create(createAccountParams)
@@ -40,7 +40,7 @@ describe('AccountMongoRepository', () => {
   })
 
   describe('loadByEmail()', () => {
-    test('Should return an account on success', async () => {
+    it('Should return an account on success', async () => {
       const sut = makeSut()
       const createAccountParams = mockAccountParams()
       await accountCollection.insertOne(createAccountParams)
@@ -51,7 +51,7 @@ describe('AccountMongoRepository', () => {
       expect(account?.password).toBe(createAccountParams.password)
     })
 
-    test('Should return null if loadByEmail fails', async () => {
+    it('Should return null if loadByEmail fails', async () => {
       const sut = makeSut()
       const account = await sut.loadByEmail(faker.internet.email())
       expect(account).toBeFalsy()
@@ -59,7 +59,7 @@ describe('AccountMongoRepository', () => {
   })
 
   describe('checkByEmail()', () => {
-    test('Should return true if email is valid', async () => {
+    it('Should return true if email is valid', async () => {
       const sut = makeSut()
       const createAccountParams = mockAccountParams()
       await accountCollection.insertOne(createAccountParams)
@@ -67,7 +67,7 @@ describe('AccountMongoRepository', () => {
       expect(exists).toBe(true)
     })
 
-    test('Should return false if email is not valid', async () => {
+    it('Should return false if email is not valid', async () => {
       const sut = makeSut()
       const exists = await sut.checkByEmail(faker.internet.email())
       expect(exists).toBe(false)
@@ -75,7 +75,7 @@ describe('AccountMongoRepository', () => {
   })
 
   describe('updateAccessToken()', () => {
-    test('Should update the account accessToken on success', async () => {
+    it('Should update the account accessToken on success', async () => {
       const sut = makeSut()
       const res = await accountCollection.insertOne(mockAccountParams())
       const fakeAccount = await accountCollection.findOne({ _id: res.insertedId })
@@ -101,7 +101,7 @@ describe('AccountMongoRepository', () => {
       accessToken = faker.string.uuid()
     })
 
-    test('Should return an account on loadByToken without role', async () => {
+    it('Should return an account on loadByToken without role', async () => {
       const sut = makeSut()
       await accountCollection.insertOne({
         name,
@@ -114,7 +114,7 @@ describe('AccountMongoRepository', () => {
       expect(account?.id).toBeTruthy()
     })
 
-    test('Should return an account on loadByToken with admin role', async () => {
+    it('Should return an account on loadByToken with admin role', async () => {
       const sut = makeSut()
       await accountCollection.insertOne({
         name,
@@ -128,7 +128,7 @@ describe('AccountMongoRepository', () => {
       expect(account?.id).toBeTruthy()
     })
 
-    test('Should return null on loadByToken with invalid role', async () => {
+    it('Should return null on loadByToken with invalid role', async () => {
       const sut = makeSut()
       await accountCollection.insertOne({
         name,
@@ -140,7 +140,7 @@ describe('AccountMongoRepository', () => {
       expect(account).toBeFalsy()
     })
 
-    test('Should return an account on loadByToken with if user is admin', async () => {
+    it('Should return an account on loadByToken with if user is admin', async () => {
       const sut = makeSut()
       await accountCollection.insertOne({
         name,
@@ -154,7 +154,7 @@ describe('AccountMongoRepository', () => {
       expect(account?.id).toBeTruthy()
     })
 
-    test('Should return null if loadByToken fails', async () => {
+    it('Should return null if loadByToken fails', async () => {
       const sut = makeSut()
       const account = await sut.loadByToken(accessToken)
       expect(account).toBeFalsy()
