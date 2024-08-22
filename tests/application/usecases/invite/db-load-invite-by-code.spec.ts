@@ -5,17 +5,17 @@ import { faker } from '@faker-js/faker'
 type SutTypes = {
   sut: DbLoadInviteByCode
   decrypterSpy: DecrypterSpy
-  loadInviteByCodeSpy: LoadInviteByCodeRepositorySpy
+  loadInviteByCodeRepositorySpy: LoadInviteByCodeRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const decrypterSpy = new DecrypterSpy()
-  const loadInviteByCodeSpy = new LoadInviteByCodeRepositorySpy
-  const sut = new DbLoadInviteByCode(decrypterSpy, loadInviteByCodeSpy)
+  const loadInviteByCodeRepositorySpy = new LoadInviteByCodeRepositorySpy
+  const sut = new DbLoadInviteByCode(decrypterSpy, loadInviteByCodeRepositorySpy)
   return {
     sut,
     decrypterSpy,
-    loadInviteByCodeSpy
+    loadInviteByCodeRepositorySpy
   }
 }
 
@@ -41,9 +41,16 @@ describe('DbLoadInviteByCode Usecases', () => {
   })
 
   it('should call LoadInviteByCodeRepository with correct values with correct ciphertext', async () => {
-    const { sut, loadInviteByCodeSpy } = makeSut()
+    const { sut, loadInviteByCodeRepositorySpy } = makeSut()
     await sut.load({ inviteCode: encryptedCode })
-    expect(loadInviteByCodeSpy.inviteCode).toBe(encryptedCode)
+    expect(loadInviteByCodeRepositorySpy.inviteCode).toBe(encryptedCode)
+  })
+
+  test('Should return null if LoadInviteByCodeRepository returns null', async () => {
+    const { sut, loadInviteByCodeRepositorySpy } = makeSut()
+    loadInviteByCodeRepositorySpy.loadByCode = jest.fn().mockResolvedValueOnce(null)
+    const invite = await sut.load({ inviteCode: encryptedCode })
+    expect(invite).toBeNull()
   })
 })
 
