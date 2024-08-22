@@ -12,9 +12,5 @@ export type LoadInviteByCodeResult = {
   emailUser: string
   phoneUser: string
   status: string
-  inviteType: string
-  createdAt: Date
   expiration: Date
-  usedAt: Date | null
-  maxUses: number
 } | null

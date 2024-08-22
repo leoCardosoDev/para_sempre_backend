@@ -1,5 +1,12 @@
-import { LoadInviteByCodeParams, LoadInviteByCodeResult } from '@/domain/usecases/invite'
-
 export interface LoadInviteByCodeRepository {
-  loadByCode: (_params: LoadInviteByCodeParams) => Promise<LoadInviteByCodeResult>
+  loadByCode: (_inviteCode: string) => Promise<LoadInviteByCodeRepositoryResult>
 }
+
+export type LoadInviteByCodeRepositoryResult = {
+  accountId: string
+  inviteCode: string
+  emailUser: string
+  phoneUser: string
+  status: string
+  expiration: Date
+} | null

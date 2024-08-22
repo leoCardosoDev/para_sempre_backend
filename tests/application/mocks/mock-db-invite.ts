@@ -1,5 +1,5 @@
-import { CreateInviteRepository, LoadInviteByCodeRepository } from '@/application/protocols/db/invite'
-import { CreateInviteParams, CreateInviteResult, LoadInviteByCodeParams, LoadInviteByCodeResult } from '@/domain/usecases/invite'
+import { CreateInviteRepository, LoadInviteByCodeRepository, LoadInviteByCodeRepositoryResult } from '@/application/protocols/db/invite'
+import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
 
 import { faker } from '@faker-js/faker'
 
@@ -22,15 +22,11 @@ export class LoadInviteByCodeRepositorySpy implements LoadInviteByCodeRepository
     emailUser: faker.internet.email(),
     phoneUser: faker.string.uuid(),
     status: faker.word.sample(),
-    inviteType: faker.word.sample(),
-    createdAt: faker.date.past(),
     expiration: faker.date.future(),
-    usedAt: null,
-    maxUses: 1
   }
 
-  async loadByCode(_params: LoadInviteByCodeParams): Promise<LoadInviteByCodeResult> {
-    this.inviteCode = _params.inviteCode
+  async loadByCode(inviteCode: string): Promise<LoadInviteByCodeRepositoryResult> {
+    this.inviteCode = inviteCode
     return this.result
   }
 }

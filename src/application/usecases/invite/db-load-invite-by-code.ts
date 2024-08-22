@@ -5,7 +5,7 @@ export class DbLoadInviteByCode implements LoadInviteByCode {
   constructor(private readonly _loadByCodeRepository: LoadInviteByCodeRepository) {}
 
   async load(_params: LoadInviteByCodeParams): Promise<LoadInviteByCodeResult> {
-    const inviteData = await this._loadByCodeRepository.loadByCode(_params)
+    const inviteData = await this._loadByCodeRepository.loadByCode(_params.inviteCode)
     return inviteData
   }
 }
