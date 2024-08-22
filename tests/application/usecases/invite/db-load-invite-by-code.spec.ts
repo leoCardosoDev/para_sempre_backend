@@ -1,18 +1,21 @@
 import { DbLoadInviteByCode } from '@/application/usecases/invite'
-import { DecrypterSpy } from '@/tests/application/mocks'
+import { DecrypterSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 import { faker } from '@faker-js/faker'
 
 type SutTypes = {
   sut: DbLoadInviteByCode
   decrypterSpy: DecrypterSpy
+  loadInviteByCodeSpy: LoadInviteByCodeRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const decrypterSpy = new DecrypterSpy()
-  const sut = new DbLoadInviteByCode(decrypterSpy)
+  const loadInviteByCodeSpy = new LoadInviteByCodeRepositorySpy
+  const sut = new DbLoadInviteByCode(decrypterSpy, loadInviteByCodeSpy)
   return {
     sut,
-    decrypterSpy
+    decrypterSpy,
+    loadInviteByCodeSpy
   }
 }
 
@@ -28,6 +31,12 @@ describe('DbLoadInviteByCode Usecases', () => {
     const { sut, decrypterSpy } = makeSut()
     await sut.load({ inviteCode: encryptedCode })
     expect(decrypterSpy.ciphertext).toBe(encryptedCode)
+  })
+
+  it('should call LoadInviteByCodeRepository with correct values with correct ciphertext', async () => {
+    const { sut, loadInviteByCodeSpy } = makeSut()
+    await sut.load({ inviteCode: encryptedCode })
+    expect(loadInviteByCodeSpy.inviteCode).toBe(encryptedCode)
   })
 })
 
