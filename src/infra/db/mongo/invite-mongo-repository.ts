@@ -3,7 +3,7 @@ import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite
 import { MongoHelper } from '@/infra/db/mongo'
 
 export class InviteMongoRepository implements CreateInviteRepository, LoadInviteByCodeRepository {
-  async create(_inviteData: CreateInviteParams): Promise<CreateInviteResult> {
+  async createInvite(_inviteData: CreateInviteParams): Promise<CreateInviteResult> {
     const inviteCollection = await MongoHelper.getCollection('invites')
     const result = await inviteCollection.insertOne(_inviteData)
     const inviteWithId = { ..._inviteData, _id: result.insertedId }

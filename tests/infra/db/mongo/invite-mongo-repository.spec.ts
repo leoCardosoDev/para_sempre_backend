@@ -41,7 +41,7 @@ describe('Invite Mongo Repository', () => {
   describe('create()', () => {
     it('should create invite on success', async () => {
       const sut = makeSut()
-      await sut.create(mockInviteParams())
+      await sut.createInvite(mockInviteParams())
       const invite = await inviteCollection.findOne({ accountId: 'any_account_id', })
       expect(invite).toBeTruthy()
       expect(invite?._id).toBeTruthy()

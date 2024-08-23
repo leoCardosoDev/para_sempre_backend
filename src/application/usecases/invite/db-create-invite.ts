@@ -10,7 +10,7 @@ export class DbCreateInvite implements CreateInvite {
 
   async create(_invite: CreateInviteParams): Promise<CreateInviteResult> {
     _invite.inviteCode = await this._encrypter.encrypt(_invite.emailUser)
-    const result = await this._createInviteRepository.create(_invite)
+    const result = await this._createInviteRepository.createInvite(_invite)
     return result
   }
 }

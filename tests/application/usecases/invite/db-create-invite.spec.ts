@@ -37,7 +37,7 @@ const makeSut = (): SutTypes => {
 describe('DbCreateInvite Usecase', () => {
   it('should call CreateInviteRepository with correct values', async () => {
     const { sut, createInviteRepositorySpy, encrypterSpy } = makeSut()
-    const createSpy = jest.spyOn(createInviteRepositorySpy, 'create')
+    const createSpy = jest.spyOn(createInviteRepositorySpy, 'createInvite')
     const inviteData = mockInviteData()
     await sut.create(inviteData)
     expect(createSpy).toHaveBeenCalledWith({
@@ -48,7 +48,7 @@ describe('DbCreateInvite Usecase', () => {
 
   it('should throw if CreateInviteRepository throws', async () => {
     const { sut, createInviteRepositorySpy } = makeSut()
-    jest.spyOn(createInviteRepositorySpy, 'create').mockImplementationOnce(throwError)
+    jest.spyOn(createInviteRepositorySpy, 'createInvite').mockImplementationOnce(throwError)
     const inviteData = mockInviteData()
     const promise = sut.create(inviteData)
     await expect(promise).rejects.toThrow()

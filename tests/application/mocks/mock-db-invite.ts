@@ -4,7 +4,7 @@ import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite
 import { faker } from '@faker-js/faker'
 
 export class CreateInviteRepositorySpy implements CreateInviteRepository {
-  async create (_invateData: CreateInviteParams): Promise<CreateInviteResult> {
+  async createInvite (_invateData: CreateInviteParams): Promise<CreateInviteResult> {
     const result = {
       inviteCode: _invateData.inviteCode,
       status: _invateData.status,
