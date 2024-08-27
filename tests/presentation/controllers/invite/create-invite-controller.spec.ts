@@ -1,5 +1,5 @@
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers/invite'
-import { InvalidParamError, MissingParamError } from '@/presentation/errors'
+import { MissingParamError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { throwError } from '@/tests/domain/mocks'
 import { ValidationSpy } from '@/tests/presentation/mocks'
@@ -11,18 +11,18 @@ const mockRequest = (expirationDate?: Date, accountId?: string): CreateInviteCon
   accountId: accountId || faker.string.uuid(),
   inviteCode: faker.string.uuid(),
   emailUser: faker.internet.email(),
-  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
+  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
   status: faker.word.sample(),
   inviteType: faker.word.sample(),
   createdAt: faker.date.recent(),
   expiration: expirationDate || faker.date.future(),
   usedAt: null,
-  maxUses: faker.number.int({ min: 0, max: 1 }),
+  maxUses: faker.number.int({ min: 0, max: 1 })
 })
 
 type SutTypes = {
-  sut: CreateInviteController,
-  validationSpy: ValidationSpy,
+  sut: CreateInviteController
+  validationSpy: ValidationSpy
   createInviteSpy: CreateInviteSpy
 }
 
@@ -53,20 +53,12 @@ describe('CreateInvite Controller', () => {
     expect(httpResponse).toEqual(badRequest(validationSpy.error))
   })
 
-  it('should return 400 if expiration date is earlier than createdAt date', async () => {
-    const { sut } = makeSut()
-    const pastDate = faker.date.past()
-    const request = mockRequest(pastDate)
-    const httpResponse = await sut.handle(request)
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('expiration must be greater than createdAt')))
-  })
-
   it('should call CreateInvite with correct values', async () => {
     const { sut, createInviteSpy } = makeSut()
     const createSpy = jest.spyOn(createInviteSpy, 'create')
     const request = mockRequest()
     await sut.handle(request)
-    expect(createSpy).toHaveBeenCalledWith({...request, usedAt: null})
+    expect(createSpy).toHaveBeenCalledWith({ ...request, usedAt: null })
   })
 
   it('should returns 500 if CreateInvite throws', async () => {
@@ -81,10 +73,12 @@ describe('CreateInvite Controller', () => {
     const { sut } = makeSut()
     const request = mockRequest()
     const httpResponse = await sut.handle(request)
-    expect(httpResponse).toEqual(ok({
-      "inviteCode": 'any_invite_code',
-      "status": 'any_status',
-      "expiration": new Date('2025-01-29T01:29:12.841Z')
-    }))
+    expect(httpResponse).toEqual(
+      ok({
+        inviteCode: 'any_invite_code',
+        status: 'any_status',
+        expiration: new Date('2025-01-29T01:29:12.841Z')
+      })
+    )
   })
 })

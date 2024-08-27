@@ -3,18 +3,19 @@ import { DbCreateInvite } from '@/application/usecases/invite'
 import { CreateInviteRepositorySpy, EncrypterSpy } from '@/tests/application/mocks'
 import { faker } from '@faker-js/faker'
 import { throwError } from '@/tests/domain/mocks'
+import { InvalidExpirationDateError } from '@/domain/errors'
 
 const mockInviteData = (): CreateInviteParams => ({
   accountId: faker.string.uuid(),
   inviteCode: faker.string.uuid(),
   emailUser: faker.internet.email(),
-  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
+  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
   status: faker.word.sample(),
   inviteType: faker.word.sample(),
   createdAt: faker.date.recent(),
   expiration: faker.date.future(),
   usedAt: null,
-  maxUses: faker.number.int({min: 0, max: 1})
+  maxUses: faker.number.int({ min: 0, max: 1 })
 })
 
 type SutTypes = {
@@ -60,6 +61,17 @@ describe('DbCreateInvite Usecase', () => {
     const inviteData = mockInviteData()
     await sut.create(inviteData)
     expect(encryptSpy).toHaveBeenCalledWith(inviteData.emailUser)
+  })
+
+  it('should throw an error if createdAt be greater than expiration date', async () => {
+    const { sut } = makeSut()
+    const inviteData = {
+      ...mockInviteData(),
+      createdAt: new Date('2024-08-27T00:00:00Z'),
+      expiration: new Date('2024-08-27T00:00:00Z')
+    }
+    const promise = sut.create(inviteData)
+    await expect(promise).rejects.toThrow(new InvalidExpirationDateError())
   })
 
   it('should return true on success', async () => {
