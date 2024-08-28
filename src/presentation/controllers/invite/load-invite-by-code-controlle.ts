@@ -1,5 +1,5 @@
 import { LoadInviteByCode } from '@/domain/usecases/invite'
-import { badRequest, ok, serverError } from '@/presentation/helpers'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class LoadInviteByCodeController implements Controller {
@@ -15,6 +15,9 @@ export class LoadInviteByCodeController implements Controller {
         return badRequest(error)
       }
       const result = await this._loadInvite.load(request)
+      if (!result) {
+        return notFound(new Error('Not Found'))
+      }
       return ok(result)
     } catch (error) {
       return serverError(error as Error)

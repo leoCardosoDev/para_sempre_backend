@@ -6,7 +6,7 @@ import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
 import request from 'supertest'
-
+import { faker } from '@faker-js/faker'
 
 let inviteCollection: Collection
 let accountCollection: Collection
@@ -21,13 +21,16 @@ const mockAccessToken = async (): Promise<string> => {
   })
   const id = res.insertedId.toHexString()
   const accessToken = sign({ id }, env.jwtSecret)
-  await accountCollection.updateOne({
-    _id: res.insertedId
-  }, {
-    $set: {
-      accessToken
+  await accountCollection.updateOne(
+    {
+      _id: res.insertedId
+    },
+    {
+      $set: {
+        accessToken
+      }
     }
-  })
+  )
   return accessToken
 }
 
@@ -82,5 +85,44 @@ describe('Invite Routes', () => {
         .expect(200)
     })
   })
+  describe('GET /invites/:inviteCode/results', () => {
+    it('Should return 403 when getting invite without accessToken', async () => {
+      await request(app).get(`/api/invites/any_code/results`).expect(403)
+    })
 
+    it('Should return 404 when invite is not found', async () => {
+      const accessToken = await mockAccessToken()
+      const invalidInviteCode = 'nonExistentInviteCode' // Usar um código que não existe
+      await request(app).get(`/api/invites/${invalidInviteCode}/results`).set('x-access-token', accessToken).expect(404)
+    })
+
+    it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
+      const accessToken = await mockAccessToken()
+      const inviteCode = faker.string.uuid() // Gerando um código único para o teste
+
+      await inviteCollection.insertOne({
+        accountId: faker.string.uuid(),
+        inviteCode,
+        emailUser: faker.internet.email(),
+        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+        status: faker.word.sample(),
+        inviteType: faker.word.sample(),
+        createdAt: faker.date.recent(),
+        expiration: faker.date.future(),
+        usedAt: null,
+        maxUses: faker.number.int({ min: 0, max: 1 })
+      })
+
+      await request(app)
+        .get(`/api/invites/${inviteCode}/results`) // Usando inviteCode ao invés de insertedId
+        .set('x-access-token', accessToken)
+        .expect(200)
+        .expect(response => {
+          expect(response.body).toHaveProperty('id')
+          expect(response.body).toHaveProperty('emailUser')
+          expect(response.body).toHaveProperty('status')
+          // Adicione mais verificações conforme necessário
+        })
+    })
+  })
 })
