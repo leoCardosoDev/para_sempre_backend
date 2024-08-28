@@ -1,5 +1,4 @@
-import { CheckAccountByEmailRepository, CreateAccountRepository, LoadAccountByEmailRepository, LoadAccountByTokenRepository, UpdateAccessTokenRepository } from "@/application/protocols";
-import { CheckAccountByEmailRepositoryResult, CreateAccountRepositoryParams, CreateAccountRepositoryResult, LoadAccountByEmailRepositoryResult, LoadAccountByTokenRepositoryResult } from "@/application/types";
+import { CheckAccountByEmailRepository, CheckAccountByEmailRepositoryResult, CreateAccountRepository, CreateAccountRepositoryParams, CreateAccountRepositoryResult, LoadAccountByEmailRepository, LoadAccountByEmailRepositoryResult, LoadAccountByTokenRepository, LoadAccountByTokenRepositoryResult, UpdateAccessTokenRepository } from "@/application/protocols";
 
 import { faker } from '@faker-js/faker'
 

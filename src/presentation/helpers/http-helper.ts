@@ -11,6 +11,11 @@ export const forbidden = (error: Error): HttpResponse => ({
   body: error
 })
 
+export const notFound = (error: Error): HttpResponse => ({
+  statusCode: 404,
+  body: error
+})
+
 export const unauthorized = (): HttpResponse => ({
   statusCode: 401,
   body: new UnauthorizedError()

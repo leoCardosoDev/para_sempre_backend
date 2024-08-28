@@ -10,6 +10,7 @@ export default [
       "**/node_modules",
       "**/dist",
       "**/data",
+      "src/main/config/custom-namespace.d.ts",
       "**/coverage",
       "**/requirements",
       "**/.vscode",

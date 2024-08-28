@@ -1,5 +1,4 @@
-import { LoadAccountByToken } from '@/domain/usecases'
-import { LoadAccountByTokenResult } from '@/domain/types'
+import { LoadAccountByToken, LoadAccountByTokenResult } from '@/domain/usecases'
 import { Decrypter, LoadAccountByTokenRepository } from '@/application/protocols'
 
 export class DbLoadAccountByToken implements LoadAccountByToken {
