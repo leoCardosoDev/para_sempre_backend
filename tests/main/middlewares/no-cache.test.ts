@@ -11,7 +11,7 @@ describe('NoCache Middleware', () => {
     app = await setupApp()
   })
 
-  test('Should disable cache', async () => {
+  it('Should disable cache', async () => {
     app.get('/test_no_cache', noCache, (req, res) => {
       res.send()
     })

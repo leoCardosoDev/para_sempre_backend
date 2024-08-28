@@ -1,6 +1,6 @@
 {
   "name": "casados-para-sempre",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Aplicação para ajudar casais a fortalecerem seus relacionamentos.",
   "main": "src/index.js",
   "scripts": {
@@ -50,6 +50,7 @@
     "@typescript-eslint/parser": "^8.0.1",
     "bson-objectid": "^2.0.4",
     "copyfiles": "^2.4.1",
+    "coveralls": "^3.1.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.9.0",

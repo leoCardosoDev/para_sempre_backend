@@ -11,7 +11,7 @@ const makeSut = (): CompareFieldsValidation => {
 }
 
 describe('CompareFieldsValidation', () => {
-  test('Should return an InvalidParamError if validation fails', () => {
+  it('Should return an InvalidParamError if validation fails', () => {
     const sut = makeSut()
     const error = sut.validate({
       [field]: 'any_field',
@@ -20,7 +20,7 @@ describe('CompareFieldsValidation', () => {
     expect(error).toEqual(new InvalidParamError(fieldToCompare))
   })
 
-  test('Should not return if validation succeeds', () => {
+  it('Should not return if validation succeeds', () => {
     const sut = makeSut()
     const value = faker.lorem.word()
     const error = sut.validate({

@@ -1,7 +1,16 @@
 import { MongoHelper } from '@/infra/db'
-import { CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckAccountByEmailRepository } from '@/application/protocols/db'
+import {
+  CreateAccountRepository,
+  LoadAccountByEmailRepository,
+  UpdateAccessTokenRepository,
+  LoadAccountByTokenRepository,
+  CheckAccountByEmailRepository,
+  CreateAccountRepositoryParams,
+  LoadAccountByEmailRepositoryResult,
+  CheckAccountByEmailRepositoryResult,
+  LoadAccountByTokenRepositoryResult
+} from '@/application/protocols/db'
 import { ObjectId, Document } from 'mongodb'
-import { CheckAccountByEmailRepositoryResult, CreateAccountRepositoryParams, LoadAccountByEmailRepositoryResult, LoadAccountByTokenRepositoryResult } from '@/application/types'
 
 export interface AccountDocument extends Document {
   name: string

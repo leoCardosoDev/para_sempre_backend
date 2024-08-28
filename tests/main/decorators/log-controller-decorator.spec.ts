@@ -39,20 +39,20 @@ const makeSut = (): SutTypes => {
 }
 
 describe('LogController Decorator', () => {
-  test('Should call controller handle', async () => {
+  it('Should call controller handle', async () => {
     const { sut, controllerSpy } = makeSut()
     const request = faker.lorem.sentence()
     await sut.handle(request)
     expect(controllerSpy.request).toEqual(request)
   })
 
-  test('Should return the same result of the controller', async () => {
+  it('Should return the same result of the controller', async () => {
     const { sut, controllerSpy } = makeSut()
     const httpResponse = await sut.handle(faker.lorem.sentence())
     expect(httpResponse).toEqual(controllerSpy.httpResponse)
   })
 
-  test('Should call LogErrorRepository with correct error if controller returns a server error', async () => {
+  it('Should call LogErrorRepository with correct error if controller returns a server error', async () => {
     const { sut, controllerSpy, logErrorRepositorySpy } = makeSut()
     const serverError = mockServerError()
     controllerSpy.httpResponse = serverError

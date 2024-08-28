@@ -1,5 +1,4 @@
-import { AuthenticationParams, AuthenticationResult, CreateAccountParams, CreateAccountResult, LoadAccountByTokenResult } from '@/domain/types'
-import { CreateAccount, Authentication, LoadAccountByToken } from '@/domain/usecases'
+import { CreateAccount, Authentication, LoadAccountByToken, CreateAccountParams, CreateAccountResult, AuthenticationParams, AuthenticationResult, LoadAccountByTokenResult } from '@/domain/usecases'
 
 import { faker } from '@faker-js/faker'
 
