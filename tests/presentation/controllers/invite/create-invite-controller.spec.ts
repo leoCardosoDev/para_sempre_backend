@@ -52,6 +52,12 @@ describe('CreateInvite Controller', () => {
     const createSpy = jest.spyOn(createInviteSpy, 'create')
     const request = mockRequest()
     await sut.handle(request)
-    expect(createSpy).toHaveBeenCalledWith(request)
+    expect(createSpy).toHaveBeenCalledWith({
+      ...request,
+      accountId: request.accountId,
+      createdAt: new Date(request.createdAt),
+      expiration: new Date(request.expiration),
+      usedAt: request.usedAt ? new Date(request.usedAt) : null
+    })
   })
 })
