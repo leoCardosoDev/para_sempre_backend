@@ -1,5 +1,5 @@
 import { CreateInvite } from '@/domain/usecases/invite'
-import { badRequest } from '@/presentation/helpers'
+import { badRequest, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class CreateInviteController implements Controller {
@@ -9,17 +9,21 @@ export class CreateInviteController implements Controller {
   ) {}
 
   async handle(request: CreateInviteControllerParams): Promise<HttpResponse> {
-    const error = this._validation.validate(request)
-    if (error) return badRequest(error)
-    const inviteParams = {
-      ...request,
-      accountId: request.accountId,
-      createdAt: new Date(request.createdAt),
-      expiration: new Date(request.expiration),
-      usedAt: request.usedAt ? new Date(request.usedAt) : null
+    try {
+      const error = this._validation.validate(request)
+      if (error) return badRequest(error)
+      const inviteParams = {
+        ...request,
+        accountId: request.accountId,
+        createdAt: new Date(request.createdAt),
+        expiration: new Date(request.expiration),
+        usedAt: request.usedAt ? new Date(request.usedAt) : null
+      }
+      await this._createInvite.create(inviteParams)
+      return { statusCode: 400, body: {} } //temporario até terminar a feature
+    } catch (error) {
+      return serverError(error as Error)
     }
-    await this._createInvite.create(inviteParams)
-    return { statusCode: 200, body: {} } //temporario até terminar a feature
   }
 }
 
