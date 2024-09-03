@@ -38,56 +38,48 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbCreateInvite Usecase', () => {
-  it('should generate a unique inviteCode and pass it to CreateInviteRepository', async () => {
-    const { sut, inviteCodeGenaratorSpy, createInviteRepositorySpy } = makeSut()
-    const inviteCode = 'unique_invite_code'
+  const setupMocks = (emailCheckResult: boolean, inviteCode: string, inviteDataOverride?: Partial<CreateInviteParams>) => {
+    const { sut, checkEmailRepositorySpy, createInviteRepositorySpy, inviteCodeGenaratorSpy } = makeSut()
+    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockResolvedValue(emailCheckResult)
     inviteCodeGenaratorSpy.generate.mockResolvedValue(inviteCode)
-    const inviteData = mockInviteData()
-    const expectedInviteData = { ...inviteData, inviteCode }
+    const inviteData = { ...mockInviteData(), ...inviteDataOverride }
+    return { sut, checkEmailRepositorySpy, createInviteRepositorySpy, inviteCodeGenaratorSpy, inviteData }
+  }
+
+  it('should generate a unique inviteCode and pass it to CreateInviteRepository', async () => {
+    const { sut, createInviteRepositorySpy, inviteCodeGenaratorSpy, inviteData } = setupMocks(false, 'unique_invite_code')
     const createSpy = jest.spyOn(createInviteRepositorySpy, 'createInvite')
     await sut.create(inviteData)
     expect(inviteCodeGenaratorSpy.generate).toHaveBeenCalledTimes(1)
-    expect(createSpy).toHaveBeenCalledWith(expectedInviteData)
+    expect(createSpy).toHaveBeenCalledWith({ ...inviteData, inviteCode: 'unique_invite_code' })
   })
 
   it('should call CreateInviteRepository with correct values', async () => {
-    const { sut, createInviteRepositorySpy, inviteCodeGenaratorSpy } = makeSut()
-    const inviteCode = 'unique_invite_code'
-    inviteCodeGenaratorSpy.generate.mockResolvedValue(inviteCode)
+    const { sut, createInviteRepositorySpy, inviteData } = setupMocks(false, 'unique_invite_code')
     const createSpy = jest.spyOn(createInviteRepositorySpy, 'createInvite')
-    const inviteData = mockInviteData()
     await sut.create(inviteData)
-    expect(createSpy).toHaveBeenCalledWith({
-      ...inviteData,
-      inviteCode
-    })
+    expect(createSpy).toHaveBeenCalledWith({ ...inviteData, inviteCode: 'unique_invite_code' })
   })
 
   it('should allow invite creation if email does not exist', async () => {
-    const { sut, checkEmailRepositorySpy, createInviteRepositorySpy, inviteCodeGenaratorSpy } = makeSut()
-    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockResolvedValue(false)
-    const inviteCode = 'unique_invite_code'
-    inviteCodeGenaratorSpy.generate.mockResolvedValue(inviteCode)
-    const inviteData = mockInviteData()
+    const { sut, createInviteRepositorySpy, inviteData } = setupMocks(false, 'unique_invite_code')
     const createSpy = jest.spyOn(createInviteRepositorySpy, 'createInvite')
     await sut.create(inviteData)
-    expect(createSpy).toHaveBeenCalledWith({
-      ...inviteData,
-      inviteCode
-    })
+    expect(createSpy).toHaveBeenCalledWith({ ...inviteData, inviteCode: 'unique_invite_code' })
   })
 
   it('should not allow invite creation if email already exists', async () => {
-    const { sut, checkEmailRepositorySpy } = makeSut()
-    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockResolvedValue(true)
+    const { sut } = setupMocks(true, '')
     const inviteData = mockInviteData()
     const promise = sut.create(inviteData)
     await expect(promise).rejects.toThrow(new EmailInUseError())
   })
 
   it('should throw an error if expiration date is earlier than creation date', async () => {
-    const { sut, checkEmailRepositorySpy } = makeSut()
-    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockResolvedValue(false)
+    const { sut } = setupMocks(false, '', {
+      createdAt: new Date('2024-01-01'),
+      expiration: new Date('2023-12-31')
+    })
     const inviteData = {
       ...mockInviteData(),
       createdAt: new Date('2024-01-01'),

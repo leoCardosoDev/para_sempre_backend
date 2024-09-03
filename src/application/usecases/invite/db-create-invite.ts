@@ -15,7 +15,7 @@ export class DbCreateInvite implements CreateInvite {
     if (emailInUse) {
       throw new EmailInUseError()
     }
-    if (_invite.expiration < _invite.createdAt) {
+    if (_invite.expiration <= _invite.createdAt) {
       throw new InvalidExpirationDateError()
     }
     const inviteCode = await this._inviteGenerator.generate()
