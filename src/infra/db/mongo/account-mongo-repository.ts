@@ -10,13 +10,7 @@ import {
   CheckAccountByEmailRepositoryResult,
   LoadAccountByTokenRepositoryResult
 } from '@/application/protocols/db'
-import { ObjectId, Document } from 'mongodb'
-
-export interface AccountDocument extends Document {
-  name: string
-  email: string
-  password: string
-}
+import { ObjectId } from 'mongodb'
 
 export class AccountMongoRepository implements CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckAccountByEmailRepository {
   async create(data: CreateAccountRepositoryParams): Promise<boolean> {
