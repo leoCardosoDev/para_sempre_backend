@@ -17,7 +17,7 @@ export class CreateInviteController implements Controller {
         accountId: request.accountId,
         createdAt: new Date(request.createdAt),
         expiration: new Date(request.expiration),
-        usedAt: request.usedAt ? new Date(request.usedAt) : null
+        usedAt: null
       }
       const result = await this._createInvite.create(inviteParams)
       return ok(result)
