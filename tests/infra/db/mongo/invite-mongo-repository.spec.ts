@@ -57,5 +57,11 @@ describe('Invite Mongo Repository', () => {
       expect(invite).toBeTruthy()
       expect(invite?.emailUser).toBe(createInvite.emailUser)
     })
+
+    it('should return null if result null', async () => {
+      const sut = makeSut()
+      const invite = await sut.loadByCode('non_existing_invite_code') // Passe um código que não existe
+      expect(invite).toBeNull()
+    })
   })
 })
