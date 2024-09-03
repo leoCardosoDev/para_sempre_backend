@@ -1,6 +1,6 @@
 import { CreateInviteParams } from '@/domain/usecases/invite'
 import { DbCreateInvite } from '@/application/usecases/invite'
-import { CheckEmailRepositorySpy, CreateInviteRepositorySpy, InviteCodeGeneratorSpy } from '@/tests/application/mocks'
+import { CheckEmailRepositorySpy, CreateInviteRepositorySpy, InviteCodeGeneratorSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 import { faker } from '@faker-js/faker'
 import { EmailInUseError, InvalidExpirationDateError } from '@/domain/errors'
 
@@ -20,20 +20,23 @@ const mockInviteData = (): CreateInviteParams => ({
 type SutTypes = {
   sut: DbCreateInvite
   checkEmailRepositorySpy: CheckEmailRepositorySpy
+  loadByInviteCodeRepositorySpy: LoadInviteByCodeRepositorySpy
   createInviteRepositorySpy: CreateInviteRepositorySpy
   inviteCodeGenaratorSpy: InviteCodeGeneratorSpy
 }
 
 const makeSut = (): SutTypes => {
   const checkEmailRepositorySpy = new CheckEmailRepositorySpy()
+  const loadByInviteCodeRepositorySpy = new LoadInviteByCodeRepositorySpy()
   const createInviteRepositorySpy = new CreateInviteRepositorySpy()
   const inviteCodeGenaratorSpy = new InviteCodeGeneratorSpy()
-  const sut = new DbCreateInvite(checkEmailRepositorySpy, createInviteRepositorySpy, inviteCodeGenaratorSpy)
+  const sut = new DbCreateInvite(checkEmailRepositorySpy, createInviteRepositorySpy, inviteCodeGenaratorSpy, loadByInviteCodeRepositorySpy)
   return {
     sut,
     checkEmailRepositorySpy,
     createInviteRepositorySpy,
-    inviteCodeGenaratorSpy
+    inviteCodeGenaratorSpy,
+    loadByInviteCodeRepositorySpy
   }
 }
 
@@ -87,5 +90,26 @@ describe('DbCreateInvite Usecase', () => {
     }
     const promise = sut.create(inviteData)
     await expect(promise).rejects.toThrow(new InvalidExpirationDateError())
+  })
+
+  it('should generate a new inviteCode if the generated code already exists', async () => {
+    const { sut, inviteCodeGenaratorSpy, loadByInviteCodeRepositorySpy } = makeSut()
+    const inviteData = mockInviteData()
+    const existingInvite = {
+      inviteId: 'existing_invite_id',
+      accountId: inviteData.accountId,
+      inviteCode: 'duplicate_invite_code',
+      emailUser: inviteData.emailUser,
+      phoneUser: inviteData.phoneUser,
+      status: inviteData.status,
+      expiration: inviteData.expiration,
+      usedAt: inviteData.usedAt
+    }
+    jest.spyOn(loadByInviteCodeRepositorySpy, 'loadByCode').mockResolvedValueOnce(existingInvite).mockResolvedValueOnce(null)
+    jest.spyOn(inviteCodeGenaratorSpy, 'generate').mockResolvedValueOnce('duplicate_invite_code').mockResolvedValueOnce('unique_invite_code')
+    await sut.create(inviteData)
+    expect(inviteCodeGenaratorSpy.generate).toHaveBeenCalledTimes(2)
+    expect(loadByInviteCodeRepositorySpy.loadByCode).toHaveBeenCalledWith('duplicate_invite_code')
+    expect(loadByInviteCodeRepositorySpy.loadByCode).toHaveBeenCalledWith('unique_invite_code')
   })
 })
