@@ -16,10 +16,14 @@ export type CreateInviteParams = {
 }
 
 export type CreateInviteResult = {
-  inviteId: string
+  accountId: string
   inviteCode: string
-  status: string
   emailUser: string
-  usedAt: Date | null
+  phoneUser: string
+  status: string
+  inviteType: string
+  createdAt: Date
   expiration: Date
+  usedAt: Date | null
+  maxUses: number
 } | null

@@ -8,11 +8,16 @@ export class CreateInviteRepositorySpy implements CreateInviteRepository {
     this.inviteData = _invateData
     const result = {
       inviteId: 'last_invite_id',
+      accountId: _invateData.accountId,
       inviteCode: _invateData.inviteCode,
+      phoneUser: _invateData.phoneUser,
       status: _invateData.status,
       emailUser: _invateData.emailUser,
       usedAt: _invateData.usedAt,
-      expiration: _invateData.expiration
+      expiration: _invateData.expiration,
+      inviteType: _invateData.inviteType,
+      createdAt: _invateData.createdAt,
+      maxUses: _invateData.maxUses
     }
     return new Promise(resolve => resolve(result))
   }
@@ -29,8 +34,6 @@ export class LoadInviteByCodeRepositorySpy implements LoadInviteByCodeRepository
 
   async loadByCode(inviteCode: string): Promise<LoadInviteByCodeRepositoryResult> {
     this.inviteCode = inviteCode
-
-    // Aqui usamos spread operator para garantir que as propriedades sejam mescladas corretamente
     return this.result ? { ...this.result, inviteId: this.inviteId } : null
   }
 }

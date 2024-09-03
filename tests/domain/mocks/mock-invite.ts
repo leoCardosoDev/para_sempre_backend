@@ -4,11 +4,16 @@ export class CreateInviteSpy implements CreateInvite {
   params: CreateInviteParams
   result = {
     inviteId: 'last_invite_id',
+    accountId: 'any_account_id',
     inviteCode: 'any_invite_code',
-    emailUser: 'any_email_user',
-    usedAt: null,
+    emailUser: 'any_email_user@mail.com',
+    phoneUser: 'any_phone_user',
+    inviteType: 'any_invite_type',
     status: 'any_status',
-    expiration: new Date('2025-01-29T01:29:12.841Z')
+    usedAt: null,
+    createdAt: new Date(),
+    expiration: new Date('2025-01-29T01:29:12.841Z'),
+    maxUses: 1
   }
 
   async create(params: CreateInviteParams): Promise<CreateInviteResult> {

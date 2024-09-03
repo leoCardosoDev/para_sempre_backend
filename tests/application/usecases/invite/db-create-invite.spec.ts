@@ -112,4 +112,12 @@ describe('DbCreateInvite Usecase', () => {
     expect(loadByInviteCodeRepositorySpy.loadByCode).toHaveBeenCalledWith('duplicate_invite_code')
     expect(loadByInviteCodeRepositorySpy.loadByCode).toHaveBeenCalledWith('unique_invite_code')
   })
+
+  it('should return the created invite data', async () => {
+    const { sut } = makeSut()
+    const inviteData = mockInviteData()
+    const createdInvite = { ...inviteData, inviteId: 'last_invite_id', inviteCode: 'unique_invite_code' }
+    const result = await sut.create(inviteData)
+    expect(result).toEqual(createdInvite)
+  })
 })
