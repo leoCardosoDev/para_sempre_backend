@@ -1,23 +1,21 @@
 import { CreateInvite, CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
-
 export class CreateInviteSpy implements CreateInvite {
-  params: CreateInviteParams
-  result = {
-    inviteId: 'last_invite_id',
+  createInviteParams: CreateInviteParams | undefined // Para armazenar os parâmetros recebidos
+  result: CreateInviteResult = {
     accountId: 'any_account_id',
     inviteCode: 'any_invite_code',
-    emailUser: 'any_email_user@mail.com',
-    phoneUser: 'any_phone_user',
-    inviteType: 'any_invite_type',
-    status: 'any_status',
-    usedAt: null,
+    emailUser: 'any_email@user.com',
+    phoneUser: '1234567890',
+    status: 'active',
+    inviteType: 'event',
     createdAt: new Date(),
-    expiration: new Date('2025-01-29T01:29:12.841Z'),
+    expiration: new Date(),
+    usedAt: null,
     maxUses: 1
   }
 
-  async create(params: CreateInviteParams): Promise<CreateInviteResult> {
-    this.params = params
+  async create(inviteData: CreateInviteParams): Promise<CreateInviteResult> {
+    this.createInviteParams = inviteData
     return this.result
   }
 }
