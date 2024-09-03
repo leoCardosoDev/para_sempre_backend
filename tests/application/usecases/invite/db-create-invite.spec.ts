@@ -2,6 +2,7 @@ import { CreateInviteParams } from '@/domain/usecases/invite'
 import { DbCreateInvite } from '@/application/usecases/invite'
 import { CheckEmailRepositorySpy, CreateInviteRepositorySpy, InviteCodeGeneratorSpy } from '@/tests/application/mocks'
 import { faker } from '@faker-js/faker'
+import { EmailInUseError } from '@/domain/errors'
 
 const mockInviteData = (): CreateInviteParams => ({
   accountId: faker.string.uuid(),
@@ -74,5 +75,13 @@ describe('DbCreateInvite Usecase', () => {
       ...inviteData,
       inviteCode
     })
+  })
+
+  it('should not allow invite creation if email already exists', async () => {
+    const { sut, checkEmailRepositorySpy } = makeSut()
+    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockResolvedValue(true)
+    const inviteData = mockInviteData()
+    const promise = sut.create(inviteData)
+    await expect(promise).rejects.toThrow(new EmailInUseError())
   })
 })
