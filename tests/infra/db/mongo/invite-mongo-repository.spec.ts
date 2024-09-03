@@ -12,13 +12,13 @@ const mockInviteParams = (): CreateInviteParams => ({
   accountId: 'any_account_id',
   inviteCode: faker.string.uuid(),
   emailUser: faker.internet.email(),
-  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 }}),
+  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
   status: faker.word.sample(),
   inviteType: faker.word.sample(),
   createdAt: faker.date.recent(),
   expiration: faker.date.future(),
   usedAt: null,
-  maxUses: faker.number.int({min: 0, max: 1})
+  maxUses: faker.number.int({ min: 0, max: 1 })
 })
 
 let inviteCollection: Collection
@@ -34,7 +34,7 @@ describe('Invite Mongo Repository', () => {
   })
 
   beforeEach(async () => {
-    inviteCollection = MongoHelper.getCollection('invites')
+    inviteCollection = await MongoHelper.getCollection('invites')
     await inviteCollection.deleteMany({})
   })
 
@@ -42,7 +42,7 @@ describe('Invite Mongo Repository', () => {
     it('should create invite on success', async () => {
       const sut = makeSut()
       await sut.createInvite(mockInviteParams())
-      const invite = await inviteCollection.findOne({ accountId: 'any_account_id', })
+      const invite = await inviteCollection.findOne({ accountId: 'any_account_id' })
       expect(invite).toBeTruthy()
       expect(invite?._id).toBeTruthy()
     })
