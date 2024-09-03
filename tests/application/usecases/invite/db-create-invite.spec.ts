@@ -2,7 +2,7 @@ import { CreateInviteParams } from '@/domain/usecases/invite'
 import { DbCreateInvite } from '@/application/usecases/invite'
 import { CheckEmailRepositorySpy, CreateInviteRepositorySpy, InviteCodeGeneratorSpy } from '@/tests/application/mocks'
 import { faker } from '@faker-js/faker'
-import { EmailInUseError } from '@/domain/errors'
+import { EmailInUseError, InvalidExpirationDateError } from '@/domain/errors'
 
 const mockInviteData = (): CreateInviteParams => ({
   accountId: faker.string.uuid(),
@@ -83,5 +83,17 @@ describe('DbCreateInvite Usecase', () => {
     const inviteData = mockInviteData()
     const promise = sut.create(inviteData)
     await expect(promise).rejects.toThrow(new EmailInUseError())
+  })
+
+  it('should throw an error if expiration date is earlier than creation date', async () => {
+    const { sut, checkEmailRepositorySpy } = makeSut()
+    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockResolvedValue(false)
+    const inviteData = {
+      ...mockInviteData(),
+      createdAt: new Date('2024-01-01'),
+      expiration: new Date('2023-12-31')
+    }
+    const promise = sut.create(inviteData)
+    await expect(promise).rejects.toThrow(new InvalidExpirationDateError())
   })
 })
