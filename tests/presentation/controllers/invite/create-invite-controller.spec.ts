@@ -1,9 +1,10 @@
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers'
-import { faker } from '@faker-js/faker'
-import { ValidationSpy } from '@/tests/presentation/mocks'
 import { MissingParamError } from '@/presentation/errors'
 import { badRequest, serverError } from '@/presentation/helpers'
 import { CreateInviteSpy, throwError } from '@/tests/domain/mocks'
+import { ValidationSpy } from '@/tests/presentation/mocks'
+
+import { faker } from '@faker-js/faker'
 
 const mockRequest = (expirationDate?: string, accountId?: string): CreateInviteControllerParams => ({
   accountId: accountId || faker.string.uuid(),
