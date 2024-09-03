@@ -8,10 +8,17 @@ export class CreateInviteController implements Controller {
     private readonly _createInvite: CreateInvite
   ) {}
 
-  async handle(request: any): Promise<HttpResponse> {
+  async handle(request: CreateInviteControllerParams): Promise<HttpResponse> {
     const error = this._validation.validate(request)
     if (error) return badRequest(error)
-    await this._createInvite.create(request)
+    const inviteParams = {
+      ...request,
+      accountId: request.accountId,
+      createdAt: new Date(request.createdAt),
+      expiration: new Date(request.expiration),
+      usedAt: request.usedAt ? new Date(request.usedAt) : null
+    }
+    await this._createInvite.create(inviteParams)
     return { statusCode: 200, body: {} } //temporario até terminar a feature
   }
 }
