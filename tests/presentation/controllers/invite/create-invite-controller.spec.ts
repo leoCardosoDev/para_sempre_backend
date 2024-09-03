@@ -1,6 +1,6 @@
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers'
 import { MissingParamError } from '@/presentation/errors'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { CreateInviteSpy, throwError } from '@/tests/domain/mocks'
 import { ValidationSpy } from '@/tests/presentation/mocks'
 
@@ -68,5 +68,26 @@ describe('CreateInvite Controller', () => {
     const request = mockRequest()
     const promise = await sut.handle(request)
     expect(promise).toEqual(serverError(new Error()))
+  })
+
+  it('should returns 200 on success', async () => {
+    const { sut } = makeSut()
+    const request = mockRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(
+      ok({
+        inviteId: 'any_invite_id',
+        accountId: 'any_account_id',
+        inviteCode: 'any_invite_code',
+        emailUser: 'any_email@user.com',
+        phoneUser: '1234567890',
+        status: 'active',
+        inviteType: 'event',
+        createdAt: new Date('2024-09-03T21:15:45.224Z').toISOString(),
+        expiration: new Date('2024-09-03T21:16:18.671Z').toISOString(),
+        usedAt: null,
+        maxUses: 1
+      })
+    )
   })
 })
