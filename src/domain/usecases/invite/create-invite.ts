@@ -16,6 +16,7 @@ export type CreateInviteParams = {
 }
 
 export type CreateInviteResult = {
+  inviteId: string
   accountId: string
   inviteCode: string
   emailUser: string
