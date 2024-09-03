@@ -1,4 +1,4 @@
-import { CreateInviteRepository } from '@/application/protocols/db/invite'
+import { CreateInviteRepository, InviteCodeGenerator } from '@/application/protocols/db/invite'
 import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
 
 export class CreateInviteRepositorySpy implements CreateInviteRepository {
@@ -16,4 +16,8 @@ export class CreateInviteRepositorySpy implements CreateInviteRepository {
     }
     return new Promise(resolve => resolve(result))
   }
+}
+
+export class InviteCodeGeneratorSpy implements InviteCodeGenerator {
+  generate = jest.fn().mockResolvedValue('unique_invite_code')
 }
