@@ -32,6 +32,21 @@ export class InviteMongoRepository implements CreateInviteRepository, LoadInvite
         }
       }
     )
-    return invite && MongoHelper.map(invite)
+    if (!invite) {
+      return null
+    }
+    return {
+      inviteId: invite._id.toHexString(),
+      accountId: invite.accountId,
+      inviteCode: invite.inviteCode,
+      emailUser: invite.emailUser,
+      phoneUser: invite.phoneUser,
+      status: invite.status,
+      expiration: invite.expiration,
+      usedAt: invite.usedAt,
+      maxUses: invite.maxUses,
+      inviteType: invite.inviteType,
+      createdAt: invite.createdAt
+    } as LoadInviteByCodeRepositoryResult
   }
 }
