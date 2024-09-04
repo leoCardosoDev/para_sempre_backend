@@ -1,7 +1,7 @@
 import { LoadInviteController, LoadInviteControllerParams } from '@/presentation/controllers'
 import { MissingParamError } from '@/presentation/errors'
-import { badRequest } from '@/presentation/helpers'
-import { LoadInviteSpy } from '@/tests/domain/mocks'
+import { badRequest, serverError } from '@/presentation/helpers'
+import { LoadInviteSpy, throwError } from '@/tests/domain/mocks'
 import { ValidationSpy } from '@/tests/presentation/mocks'
 
 import { faker } from '@faker-js/faker'
@@ -45,5 +45,13 @@ describe('LoadInviteController', () => {
     await sut.handle(request)
     expect(loadInviteSpy.callsCount).toBe(1)
     expect(loadInviteSpy.params).toEqual(request)
+  })
+
+  it('should returns 500 if LoadInvite throws', async () => {
+    const { sut, loadInviteSpy } = makeSut()
+    jest.spyOn(loadInviteSpy, 'load').mockImplementationOnce(throwError)
+    const request = mockRequest()
+    const promise = await sut.handle(request)
+    expect(promise).toEqual(serverError(new Error()))
   })
 })
