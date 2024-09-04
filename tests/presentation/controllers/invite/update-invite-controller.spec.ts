@@ -22,7 +22,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const loadInviteSpy = new LoadInviteSpy()
-  const sut = new UpdateInviteController(validationSpy)
+  const sut = new UpdateInviteController(validationSpy, loadInviteSpy)
   return { sut, validationSpy, loadInviteSpy }
 }
 
@@ -40,5 +40,13 @@ describe('CreateInvite Controller', () => {
     const request = mockRequest()
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(validationSpy.error))
+  })
+
+  it('should call LoadInvite with correct params', async () => {
+    const { sut, loadInviteSpy } = makeSut()
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(loadInviteSpy.callsCount).toBe(1)
+    expect(loadInviteSpy.params).toEqual(request)
   })
 })
