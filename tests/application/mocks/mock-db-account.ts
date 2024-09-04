@@ -8,7 +8,6 @@ import {
   LoadAccountByTokenRepositoryResult,
   UpdateAccessTokenRepository
 } from '@/application/protocols'
-import { CheckEmailRepository, CheckEmailRepositoryResult } from '@/domain/email'
 
 import { faker } from '@faker-js/faker'
 
@@ -35,17 +34,6 @@ export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailReposi
     return this.result
   }
 }
-
-export class CheckAccountByEmailRepositorySpy implements CheckEmailRepository {
-  email: string
-  result = false
-
-  async checkByEmail(email: string): Promise<CheckEmailRepositoryResult> {
-    this.email = email
-    return this.result
-  }
-}
-
 export class LoadAccountByTokenRepositorySpy implements LoadAccountByTokenRepository {
   token: string
   role: string

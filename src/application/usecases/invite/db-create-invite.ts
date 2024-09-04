@@ -1,4 +1,4 @@
-import { CheckEmailRepository } from '@/domain/email'
+import { CheckEmailRepository } from '@/application/protocols/db/email'
 import { CreateInviteRepository, InviteCodeGenerator, LoadInviteByCodeRepository } from '@/application/protocols/db/invite'
 import { EmailInUseError, InvalidExpirationDateError } from '@/domain/errors'
 import { CreateInvite, CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'

@@ -6,10 +6,11 @@ import {
   LoadAccountByTokenRepository,
   CreateAccountRepositoryParams,
   LoadAccountByEmailRepositoryResult,
-  LoadAccountByTokenRepositoryResult
+  LoadAccountByTokenRepositoryResult,
+  CheckEmailRepository,
+  CheckEmailRepositoryResult
 } from '@/application/protocols/db'
 import { ObjectId } from 'mongodb'
-import { CheckEmailRepository, CheckEmailRepositoryResult } from '@/domain/email'
 
 export class AccountMongoRepository implements CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckEmailRepository {
   async create(data: CreateAccountRepositoryParams): Promise<boolean> {

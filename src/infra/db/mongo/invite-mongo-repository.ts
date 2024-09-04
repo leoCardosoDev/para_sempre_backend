@@ -1,6 +1,5 @@
 import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
-import { CreateInviteRepository, LoadInviteByCodeRepository, LoadInviteByCodeRepositoryResult } from '@/application/protocols/db/invite'
-import { CheckEmailRepository, CheckEmailRepositoryResult } from '@/domain/email'
+import { CheckEmailRepository, CheckEmailRepositoryResult, CreateInviteRepository, LoadInviteByCodeRepository, LoadInviteByCodeRepositoryResult } from '@/application/protocols/db'
 import { MongoHelper } from '@/infra/db/mongo'
 
 export class InviteMongoRepository implements CreateInviteRepository, CheckEmailRepository, LoadInviteByCodeRepository {
