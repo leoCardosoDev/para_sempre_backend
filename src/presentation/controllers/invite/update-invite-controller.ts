@@ -1,6 +1,6 @@
 import { LoadInvite, UpdateInvite } from '@/domain/usecases'
 import { NotFoundError } from '@/presentation/errors'
-import { badRequest, notFound } from '@/presentation/helpers'
+import { badRequest, notFound, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class UpdateInviteController implements Controller {
@@ -10,19 +10,23 @@ export class UpdateInviteController implements Controller {
     private readonly _updateInvite: UpdateInvite
   ) {}
   async handle(request: UpdateInviteControllerParams): Promise<HttpResponse> {
-    const error = this._validation.validate(request)
-    if (error) return badRequest(error)
-    const loadInvite = await this._loadInvite.load({ inviteCode: request.inviteCode })
-    if (!loadInvite) return notFound(new NotFoundError())
-    const inviteUpdateData = {
-      inviteCode: request.inviteCode,
-      status: request.status,
-      createdAt: new Date(request.createdAt),
-      expiration: new Date(request.expiration),
-      usedAt: new Date()
+    try {
+      const error = this._validation.validate(request)
+      if (error) return badRequest(error)
+      const loadInvite = await this._loadInvite.load({ inviteCode: request.inviteCode })
+      if (!loadInvite) return notFound(new NotFoundError())
+      const inviteUpdateData = {
+        inviteCode: request.inviteCode,
+        status: request.status,
+        createdAt: new Date(request.createdAt),
+        expiration: new Date(request.expiration),
+        usedAt: new Date()
+      }
+      await this._updateInvite.update(inviteUpdateData)
+      return new Promise(resolve => resolve({ statusCode: 200, body: null }))
+    } catch (error) {
+      return serverError(error as Error)
     }
-    await this._updateInvite.update(inviteUpdateData)
-    return new Promise(resolve => resolve({ statusCode: 200, body: null }))
   }
 }
 
