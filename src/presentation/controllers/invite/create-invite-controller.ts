@@ -1,3 +1,4 @@
+import { EmailInUseError, InvalidExpirationDateError } from '@/domain/errors'
 import { CreateInvite } from '@/domain/usecases/invite'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
@@ -22,6 +23,8 @@ export class CreateInviteController implements Controller {
       const result = await this._createInvite.create(inviteParams)
       return ok(result)
     } catch (error) {
+      if (error instanceof EmailInUseError) return badRequest(error)
+      if (error instanceof InvalidExpirationDateError) return badRequest(error)
       return serverError(error as Error)
     }
   }
