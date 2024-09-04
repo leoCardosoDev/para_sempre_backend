@@ -1,6 +1,7 @@
 import { DbLoadInvite } from '@/application/usecases/invite'
 import { LoadInviteParams } from '@/domain/usecases'
 import { LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
+import { throwError } from '@/tests/domain/mocks'
 import { faker } from '@faker-js/faker'
 
 type SutTypes = {
@@ -34,6 +35,14 @@ describe('DbLoadInvite Usecases', () => {
     loadInviteByCodeRepositorySpy.loadByCode = jest.fn().mockResolvedValueOnce(null)
     const invite = await sut.load(code)
     expect(invite).toBeNull()
+  })
+
+  it('should throw if LoadInviteByCode throws', async () => {
+    const { sut, loadInviteByCodeRepositorySpy } = makeSut()
+    const code = mockInviteCode()
+    jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode').mockImplementationOnce(throwError)
+    const promise = sut.load(code)
+    await expect(promise).rejects.toThrow()
   })
 
   it('should return invite on success', async () => {
