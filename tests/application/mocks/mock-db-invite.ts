@@ -1,4 +1,12 @@
-import { CreateInviteRepository, InviteCodeGenerator, LoadInviteByCodeRepository, LoadInviteByCodeRepositoryResult } from '@/application/protocols/db/invite'
+import {
+  CreateInviteRepository,
+  InviteCodeGenerator,
+  LoadInviteByCodeRepository,
+  LoadInviteByCodeRepositoryResult,
+  UpdateInviteRepository,
+  UpdateInviteRepositoryParams,
+  UpdateInviteRepositoryResult
+} from '@/application/protocols/db/invite'
 import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
 
 export class CreateInviteRepositorySpy implements CreateInviteRepository {
@@ -35,5 +43,16 @@ export class LoadInviteByCodeRepositorySpy implements LoadInviteByCodeRepository
   async loadByCode(inviteCode: string): Promise<LoadInviteByCodeRepositoryResult> {
     this.inviteCode = inviteCode
     return this.result ? { ...this.result, inviteId: this.inviteId } : null
+  }
+}
+export class UpdateInviteRepositorySpy implements UpdateInviteRepository {
+  params: UpdateInviteRepositoryParams
+  result: UpdateInviteRepositoryResult = true
+  callsCount = 0
+
+  async updateByCode(params: UpdateInviteRepositoryParams): Promise<UpdateInviteRepositoryResult> {
+    this.params = params
+    this.callsCount++
+    return this.result
   }
 }
