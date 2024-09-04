@@ -1,3 +1,4 @@
+import { EmailInUseError, InvalidExpirationDateError } from '@/domain/errors'
 import { CreateInviteController, CreateInviteControllerParams } from '@/presentation/controllers'
 import { MissingParamError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
@@ -68,6 +69,26 @@ describe('CreateInvite Controller', () => {
     const request = mockRequest()
     const promise = await sut.handle(request)
     expect(promise).toEqual(serverError(new Error()))
+  })
+
+  it('should return 400 if CreateInvite throws EmailInUseError', async () => {
+    const { sut, createInviteSpy } = makeSut()
+    const request = mockRequest()
+    jest.spyOn(createInviteSpy, 'create').mockImplementationOnce(() => {
+      throw new EmailInUseError()
+    })
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(badRequest(new EmailInUseError()))
+  })
+
+  it('should return 400 if CreateInvite throws InvalidExpirationDateError', async () => {
+    const { sut, createInviteSpy } = makeSut()
+    const request = mockRequest()
+    jest.spyOn(createInviteSpy, 'create').mockImplementationOnce(() => {
+      throw new InvalidExpirationDateError()
+    })
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(badRequest(new InvalidExpirationDateError()))
   })
 
   it('should returns 200 on success', async () => {
