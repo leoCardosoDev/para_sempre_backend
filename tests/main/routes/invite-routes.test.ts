@@ -6,6 +6,7 @@ import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
 import request from 'supertest'
+import { faker } from '@faker-js/faker'
 
 let inviteCollection: Collection
 let accountCollection: Collection
@@ -42,6 +43,10 @@ describe('Invite Routes', () => {
 
   afterAll(async () => {
     await MongoHelper.disconnect()
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
   })
 
   beforeEach(async () => {
@@ -82,6 +87,47 @@ describe('Invite Routes', () => {
           maxUses: 1
         })
         .expect(200)
+    })
+  })
+
+  describe('POST /invites/result', () => {
+    it('Should return 403 when getting invite without accessToken', async () => {
+      await request(app).post(`/api/invites/result`).send({ inviteCode: 'any_code' }).expect(403)
+    })
+
+    it('Should return 404 when invite is not found', async () => {
+      const accessToken = await mockAccessToken()
+      const invalidInviteCode = 'nonExistentInviteCode'
+      await request(app).post(`/api/invites/result`).set('x-access-token', accessToken).send({ inviteCode: invalidInviteCode }).expect(404)
+    })
+
+    it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
+      const accessToken = await mockAccessToken()
+      const inviteCode = faker.string.uuid()
+
+      await inviteCollection.insertOne({
+        accountId: faker.string.uuid(),
+        inviteCode,
+        emailUser: faker.internet.email(),
+        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+        status: faker.word.sample(),
+        inviteType: faker.word.sample(),
+        createdAt: faker.date.recent(),
+        expiration: faker.date.future(),
+        usedAt: null,
+        maxUses: faker.number.int({ min: 0, max: 1 })
+      })
+
+      await request(app)
+        .post(`/api/invites/result`)
+        .set('x-access-token', accessToken)
+        .send({ inviteCode })
+        .expect(200)
+        .expect(response => {
+          expect(response.body).toHaveProperty('inviteId')
+          expect(response.body).toHaveProperty('emailUser')
+          expect(response.body).toHaveProperty('status')
+        })
     })
   })
 })
