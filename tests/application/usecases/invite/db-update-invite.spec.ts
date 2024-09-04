@@ -79,4 +79,19 @@ describe('DbLoadInvite Usecases', () => {
     const promise = sut.update(params)
     await expect(promise).rejects.toThrow()
   })
+
+  it('should return false on result', async () => {
+    const { sut, loadInviteByCodeRepositorySpy, updateInviteRepositorySpy } = makeSut()
+    jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode').mockResolvedValueOnce(mockInviteResult())
+    jest.spyOn(updateInviteRepositorySpy, 'updateByCode').mockResolvedValueOnce(false)
+    const result = await sut.update(params)
+    expect(result).toBe(false)
+  })
+
+  it('should return true on result', async () => {
+    const { sut, loadInviteByCodeRepositorySpy } = makeSut()
+    jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode').mockResolvedValueOnce(mockInviteResult())
+    const result = await sut.update(params)
+    expect(result).toBe(true)
+  })
 })
