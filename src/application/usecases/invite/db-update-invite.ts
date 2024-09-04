@@ -10,7 +10,7 @@ export class DbUpdateInvite implements UpdateInvite {
   async update(params: UpdateInviteParams): Promise<UpdateInviteResult> {
     const invite = await this._loadInviteByCodeRepository.loadByCode(params.inviteCode)
     if (!invite) return false
-    await this._updateInviteRepository.updateByCode(params)
-    return true
+    const result = await this._updateInviteRepository.updateByCode(params)
+    return result
   }
 }
