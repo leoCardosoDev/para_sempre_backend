@@ -8,6 +8,7 @@ export type LoadInviteParams = {
 
 export type LoadInviteResult = {
   inviteId: string
+  accountId: string
   inviteCode: string
   emailUser: string
   phoneUser: string
