@@ -1,4 +1,4 @@
-import { CreateInvite, CreateInviteParams, CreateInviteResult, LoadInvite, LoadInviteParams, LoadInviteResult } from '@/domain/usecases/invite'
+import { CreateInvite, CreateInviteParams, CreateInviteResult, LoadInvite, LoadInviteParams, LoadInviteResult, UpdateInvite, UpdateInviteParams, UpdateInviteResult } from '@/domain/usecases/invite'
 export class CreateInviteSpy implements CreateInvite {
   createInviteParams: CreateInviteParams | undefined
   result: CreateInviteResult = {
@@ -38,6 +38,18 @@ export class LoadInviteSpy implements LoadInvite {
 
   async load(params: LoadInviteParams): Promise<LoadInviteResult> {
     this.params = params
+    this.callsCount++
+    return this.result
+  }
+}
+
+export class UpdateInviteSpy implements UpdateInvite {
+  updateParams: UpdateInviteParams | null = null
+  result: UpdateInviteResult = true
+  callsCount = 0
+
+  async update(params: UpdateInviteParams): Promise<UpdateInviteResult> {
+    this.updateParams = params
     this.callsCount++
     return this.result
   }
