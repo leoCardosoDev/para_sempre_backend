@@ -23,9 +23,13 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbLoadInvite Usecases', () => {
+  let params: UpdateInviteParams
+  beforeEach(() => {
+    params = mockInviteCode()
+  })
+
   it('should calls LoadInviteByCodeRepository with correct values', async () => {
     const { sut, loadInviteByCodeRepositorySpy } = makeSut()
-    const params = mockInviteCode()
     const loadByCodeSpy = jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode')
     await sut.update(params)
     expect(loadByCodeSpy).toHaveBeenCalledWith(params.inviteCode)
@@ -34,7 +38,6 @@ describe('DbLoadInvite Usecases', () => {
 
   it('should return false if LoadInviteByCodeRepository return null', async () => {
     const { sut, loadInviteByCodeRepositorySpy } = makeSut()
-    const params = mockInviteCode()
     jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode').mockReturnValueOnce(new Promise(resolve => resolve(null)))
     const result = await sut.update(params)
     expect(result).toBe(false)
@@ -42,7 +45,6 @@ describe('DbLoadInvite Usecases', () => {
 
   it('should throw if LoadInviteByCodeRepository throws', async () => {
     const { sut, loadInviteByCodeRepositorySpy } = makeSut()
-    const params = mockInviteCode()
     jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode').mockImplementationOnce(throwError)
     const promise = sut.update(params)
     await expect(promise).rejects.toThrow()
