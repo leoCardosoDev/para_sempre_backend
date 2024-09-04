@@ -1,5 +1,6 @@
 import { LoadInvite } from '@/domain/usecases'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { NotFoundError } from '@/presentation/errors'
+import { badRequest, notFound, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class LoadInviteController implements Controller {
@@ -11,7 +12,8 @@ export class LoadInviteController implements Controller {
     try {
       const error = this._validation.validate(request)
       if (error) return badRequest(error)
-      await this._loadInvite.load(request)
+      const invite = await this._loadInvite.load(request)
+      if (!invite) return notFound(new NotFoundError())
       return new Promise(resolve => resolve({ statusCode: 200, body: null }))
     } catch (error) {
       return serverError(error as Error)
