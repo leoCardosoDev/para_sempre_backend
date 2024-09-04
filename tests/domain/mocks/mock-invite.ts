@@ -30,7 +30,7 @@ export class LoadInviteSpy implements LoadInvite {
     emailUser: 'any_email@user.com',
     phoneUser: '1234567890',
     status: 'active',
-    expiration: new Date(),
+    expiration: new Date('2025-01-29T01:29:12.841Z'),
     usedAt: null
   }
 

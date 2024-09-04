@@ -1,6 +1,6 @@
 import { LoadInviteController, LoadInviteControllerParams } from '@/presentation/controllers'
 import { MissingParamError, NotFoundError } from '@/presentation/errors'
-import { badRequest, notFound, serverError } from '@/presentation/helpers'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers'
 import { LoadInviteSpy, throwError } from '@/tests/domain/mocks'
 import { ValidationSpy } from '@/tests/presentation/mocks'
 
@@ -61,5 +61,23 @@ describe('LoadInviteController', () => {
     const request = mockRequest()
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(notFound(new NotFoundError()))
+  })
+
+  it('should returns 200 on success', async () => {
+    const { sut } = makeSut()
+    const request = mockRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(
+      ok({
+        inviteId: 'any_invite_id',
+        accountId: 'any_account_id',
+        inviteCode: 'any_invite_code',
+        emailUser: 'any_email@user.com',
+        phoneUser: '1234567890',
+        status: 'active',
+        expiration: new Date('2025-01-29T01:29:12.841Z'),
+        usedAt: null
+      })
+    )
   })
 })
