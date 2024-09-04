@@ -71,4 +71,12 @@ describe('DbLoadInvite Usecases', () => {
     expect(updateBySpy).toHaveBeenCalledTimes(1)
     expect(updateBySpy).toHaveBeenCalledWith(params)
   })
+
+  it('should throw if UpdateInviteRepository throws', async () => {
+    const { sut, loadInviteByCodeRepositorySpy, updateInviteRepositorySpy } = makeSut()
+    jest.spyOn(updateInviteRepositorySpy, 'updateByCode').mockImplementationOnce(throwError)
+    jest.spyOn(loadInviteByCodeRepositorySpy, 'loadByCode').mockResolvedValueOnce(mockInviteResult())
+    const promise = sut.update(params)
+    await expect(promise).rejects.toThrow()
+  })
 })
