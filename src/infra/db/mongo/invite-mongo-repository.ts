@@ -1,8 +1,17 @@
 import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
-import { CheckEmailRepository, CheckEmailRepositoryResult, CreateInviteRepository, LoadInviteByCodeRepository, LoadInviteByCodeRepositoryResult } from '@/application/protocols/db'
+import {
+  CheckEmailRepository,
+  CheckEmailRepositoryResult,
+  CreateInviteRepository,
+  LoadInviteByCodeRepository,
+  LoadInviteByCodeRepositoryResult,
+  UpdateInviteRepository,
+  UpdateInviteRepositoryParams,
+  UpdateInviteRepositoryResult
+} from '@/application/protocols/db'
 import { MongoHelper } from '@/infra/db/mongo'
 
-export class InviteMongoRepository implements CreateInviteRepository, CheckEmailRepository, LoadInviteByCodeRepository {
+export class InviteMongoRepository implements CreateInviteRepository, CheckEmailRepository, LoadInviteByCodeRepository, UpdateInviteRepository {
   async createInvite(_inviteData: CreateInviteParams): Promise<CreateInviteResult> {
     const inviteCollection = await MongoHelper.getCollection('invites')
     const result = await inviteCollection.insertOne(_inviteData)
@@ -54,5 +63,20 @@ export class InviteMongoRepository implements CreateInviteRepository, CheckEmail
     const inviteCollection = await MongoHelper.getCollection('invites')
     const emailInUse = await inviteCollection.findOne({ emailUser }, { projection: { _id: 1 } })
     return !!emailInUse
+  }
+
+  async updateByCode(invite: UpdateInviteRepositoryParams): Promise<UpdateInviteRepositoryResult> {
+    const inviteCollection = await MongoHelper.getCollection('invites')
+    const result = await inviteCollection.updateOne(
+      { inviteCode: invite.inviteCode },
+      {
+        $set: {
+          status: invite.status,
+          expiration: invite.expiration,
+          usedAt: invite.usedAt
+        }
+      }
+    )
+    return result.matchedCount > 0
   }
 }
