@@ -80,4 +80,35 @@ describe('Invite Mongo Repository', () => {
       expect(emailInUse).toBe(false)
     })
   })
+  describe('updateByCode()', () => {
+    it('should update invite status, expiration, and usedAt on success', async () => {
+      const sut = makeSut()
+      const createInvite = mockInviteParams()
+      await inviteCollection.insertOne(createInvite)
+      const updatedFields = {
+        inviteCode: createInvite.inviteCode,
+        status: 'updated_status',
+        expiration: faker.date.future(),
+        usedAt: new Date()
+      }
+      const updateResult = await sut.updateByCode(updatedFields)
+      const updatedInvite = await inviteCollection.findOne({ inviteCode: createInvite.inviteCode })
+      expect(updateResult).toBe(true)
+      expect(updatedInvite).toBeTruthy()
+      expect(updatedInvite?.status).toBe(updatedFields.status)
+      expect(updatedInvite?.expiration).toEqual(updatedFields.expiration)
+      expect(updatedInvite?.usedAt).toEqual(updatedFields.usedAt)
+    })
+
+    it('should return false if no invite is found with the provided inviteCode', async () => {
+      const sut = makeSut()
+      const updateResult = await sut.updateByCode({
+        inviteCode: 'non_existing_invite_code',
+        status: 'updated_status',
+        expiration: faker.date.future(),
+        usedAt: new Date()
+      })
+      expect(updateResult).toBe(false)
+    })
+  })
 })
