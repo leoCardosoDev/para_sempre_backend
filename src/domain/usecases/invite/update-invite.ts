@@ -1,5 +1,5 @@
 export interface UpdateInvite {
-  load: (_params: UpdateInviteParams) => Promise<UpdateInviteResult>
+  update: (_params: UpdateInviteParams) => Promise<UpdateInviteResult>
 }
 
 export type UpdateInviteParams = {
