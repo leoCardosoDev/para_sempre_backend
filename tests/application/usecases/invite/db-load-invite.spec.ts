@@ -35,4 +35,11 @@ describe('DbLoadInvite Usecases', () => {
     const invite = await sut.load(code)
     expect(invite).toBeNull()
   })
+
+  it('should return invite on success', async () => {
+    const { sut, loadInviteByCodeRepositorySpy } = makeSut()
+    const code = mockInviteCode()
+    const invite = await sut.load(code)
+    expect(invite).toEqual(loadInviteByCodeRepositorySpy.result)
+  })
 })
