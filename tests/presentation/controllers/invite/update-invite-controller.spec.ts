@@ -78,7 +78,6 @@ describe('UpdateInvite Controller', () => {
     const request = mockRequest()
     await sut.handle(request)
     const expectedUpdateData = {
-      ...inviteData,
       inviteCode: request.inviteCode,
       status: request.status,
       createdAt: new Date(request.createdAt),
