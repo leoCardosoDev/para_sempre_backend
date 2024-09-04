@@ -1,4 +1,14 @@
-import { CheckAccountByEmailRepository, CheckAccountByEmailRepositoryResult, CreateAccountRepository, CreateAccountRepositoryParams, CreateAccountRepositoryResult, LoadAccountByEmailRepository, LoadAccountByEmailRepositoryResult, LoadAccountByTokenRepository, LoadAccountByTokenRepositoryResult, UpdateAccessTokenRepository } from "@/application/protocols";
+import {
+  CreateAccountRepository,
+  CreateAccountRepositoryParams,
+  CreateAccountRepositoryResult,
+  LoadAccountByEmailRepository,
+  LoadAccountByEmailRepositoryResult,
+  LoadAccountByTokenRepository,
+  LoadAccountByTokenRepositoryResult,
+  UpdateAccessTokenRepository
+} from '@/application/protocols'
+import { CheckEmailRepository, CheckEmailRepositoryResult } from '@/domain/email'
 
 import { faker } from '@faker-js/faker'
 
@@ -20,17 +30,17 @@ export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailReposi
     password: faker.internet.password()
   }
 
-  async loadByEmail (email: string): Promise<LoadAccountByEmailRepositoryResult> {
+  async loadByEmail(email: string): Promise<LoadAccountByEmailRepositoryResult> {
     this.email = email
     return this.result
   }
 }
 
-export class CheckAccountByEmailRepositorySpy implements CheckAccountByEmailRepository {
+export class CheckAccountByEmailRepositorySpy implements CheckEmailRepository {
   email: string
   result = false
 
-  async checkByEmail (email: string): Promise<CheckAccountByEmailRepositoryResult> {
+  async checkByEmail(email: string): Promise<CheckEmailRepositoryResult> {
     this.email = email
     return this.result
   }
@@ -43,7 +53,7 @@ export class LoadAccountByTokenRepositorySpy implements LoadAccountByTokenReposi
     id: faker.string.uuid()
   }
 
-  async loadByToken (token: string, role?: string): Promise<LoadAccountByTokenRepositoryResult> {
+  async loadByToken(token: string, role?: string): Promise<LoadAccountByTokenRepositoryResult> {
     this.token = token
     this.role = role ?? ''
     return this.result
@@ -54,7 +64,7 @@ export class UpdateAccessTokenRepositorySpy implements UpdateAccessTokenReposito
   id: string
   token: string
 
-  async updateAccessToken (id: string, token: string): Promise<void> {
+  async updateAccessToken(id: string, token: string): Promise<void> {
     this.id = id
     this.token = token
   }
