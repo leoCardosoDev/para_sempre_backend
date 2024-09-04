@@ -23,8 +23,8 @@ export class CreateInviteController implements Controller {
       const result = await this._createInvite.create(inviteParams)
       return ok(result)
     } catch (error) {
-      if (error instanceof EmailInUseError) return badRequest(error)
-      if (error instanceof InvalidExpirationDateError) return badRequest(error)
+      const errorInstanceof = error instanceof EmailInUseError || error instanceof InvalidExpirationDateError
+      if (errorInstanceof) return badRequest(error)
       return serverError(error as Error)
     }
   }

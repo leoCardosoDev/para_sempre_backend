@@ -1,4 +1,4 @@
-import { badRequest, forbidden, unauthorized, serverError, ok, noContent } from '@/presentation/helpers/http-helper'
+import { badRequest, forbidden, unauthorized, serverError, ok, noContent, notFound } from '@/presentation/helpers/http-helper'
 import { ServerError, UnauthorizedError } from '@/presentation/errors'
 
 describe('HttpHelper', () => {
@@ -11,6 +11,14 @@ describe('HttpHelper', () => {
     })
   })
 
+  it('unauthorized should return 401 and an UnauthorizedError', () => {
+    const httpResponse = unauthorized()
+    expect(httpResponse).toEqual({
+      statusCode: 401,
+      body: new UnauthorizedError()
+    })
+  })
+
   it('forbidden should return 403 and the provided error', () => {
     const error = new Error('any_error')
     const httpResponse = forbidden(error)
@@ -20,11 +28,12 @@ describe('HttpHelper', () => {
     })
   })
 
-  it('unauthorized should return 401 and an UnauthorizedError', () => {
-    const httpResponse = unauthorized()
+  it('notFound should return 404 and the provided error', () => {
+    const error = new Error('any_error')
+    const httpResponse = notFound(error)
     expect(httpResponse).toEqual({
-      statusCode: 401,
-      body: new UnauthorizedError()
+      statusCode: 404,
+      body: error
     })
   })
 
@@ -58,6 +67,13 @@ describe('HttpHelper', () => {
     })
   })
 
+  it('ok should return 200 and convert dates to ISO string format', () => {
+    const date = new Date()
+    const data = { date }
+    const httpResponse = ok(data)
+    expect(httpResponse.body.date).toBe(date.toISOString())
+  })
+
   it('noContent should return 204 and null as body', () => {
     const httpResponse = noContent()
     expect(httpResponse).toEqual({
@@ -65,5 +81,12 @@ describe('HttpHelper', () => {
       body: null
     })
   })
-})
 
+  it('badRequest should handle null or undefined error gracefully', () => {
+    const httpResponse = badRequest(null as any)
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      body: null
+    })
+  })
+})
