@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { ValidationSpy } from '@/tests/presentation/mocks'
-import { LoadInviteSpy, UpdateInviteSpy } from '@/tests/domain/mocks'
+import { LoadInviteSpy, throwError, UpdateInviteSpy } from '@/tests/domain/mocks'
 import { UpdateInviteController, UpdateInviteControllerParams } from '@/presentation/controllers'
 import { MissingParamError, NotFoundError } from '@/presentation/errors'
-import { badRequest, notFound } from '@/presentation/helpers'
+import { badRequest, notFound, serverError } from '@/presentation/helpers'
 
 const mockRequest = (): UpdateInviteControllerParams => ({
   inviteCode: faker.string.uuid(),
@@ -85,5 +85,13 @@ describe('UpdateInvite Controller', () => {
       usedAt: new Date()
     }
     expect(updateInviteSpy.updateParams).toEqual(expectedUpdateData)
+  })
+
+  it('should returns 500 if LoadInvite throws', async () => {
+    const { sut, loadInviteSpy } = makeSut()
+    jest.spyOn(loadInviteSpy, 'load').mockImplementationOnce(throwError)
+    const request = mockRequest()
+    const promise = await sut.handle(request)
+    expect(promise).toEqual(serverError(new Error()))
   })
 })
