@@ -27,4 +27,12 @@ describe('DbLoadInvite Usecases', () => {
     expect(loadByCodeSpy).toHaveBeenCalledWith(code.inviteCode)
     expect(loadByCodeSpy).toHaveBeenCalledTimes(1)
   })
+
+  it('should return null if LoadInviteByCode return null', async () => {
+    const { sut, loadInviteByCodeRepositorySpy } = makeSut()
+    const code = mockInviteCode()
+    loadInviteByCodeRepositorySpy.loadByCode = jest.fn().mockResolvedValueOnce(null)
+    const invite = await sut.load(code)
+    expect(invite).toBeNull()
+  })
 })
