@@ -1,9 +1,11 @@
+import { badRequest } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class UpdateInviteController implements Controller {
   constructor(private readonly _validation: Validation) {}
   async handle(request: UpdateInviteControllerParams): Promise<HttpResponse> {
-    this._validation.validate(request)
+    const error = this._validation.validate(request)
+    if (error) return badRequest(error)
     return new Promise(resolve => resolve({ statusCode: 200, body: null }))
   }
 }
