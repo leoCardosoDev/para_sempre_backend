@@ -1,9 +1,9 @@
 export interface LoadInvite {
-  load: (_code: LoadInviteParams) => Promise<LoadInviteResult>
+  load: (_params: LoadInviteParams) => Promise<LoadInviteResult>
 }
 
 export type LoadInviteParams = {
-  code: string
+  inviteCode: string
 }
 
 export type LoadInviteResult = {
