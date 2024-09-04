@@ -23,7 +23,7 @@ export class CreateInviteSpy implements CreateInvite {
 
 export class LoadInviteSpy implements LoadInvite {
   params: LoadInviteParams
-  result: LoadInviteResult = {
+  result: LoadInviteResult | null = {
     inviteId: 'any_invite_id',
     accountId: 'any_account_id',
     inviteCode: 'any_invite_code',

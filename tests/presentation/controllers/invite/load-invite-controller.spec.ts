@@ -1,6 +1,6 @@
 import { LoadInviteController, LoadInviteControllerParams } from '@/presentation/controllers'
-import { MissingParamError } from '@/presentation/errors'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { MissingParamError, NotFoundError } from '@/presentation/errors'
+import { badRequest, notFound, serverError } from '@/presentation/helpers'
 import { LoadInviteSpy, throwError } from '@/tests/domain/mocks'
 import { ValidationSpy } from '@/tests/presentation/mocks'
 
@@ -53,5 +53,13 @@ describe('LoadInviteController', () => {
     const request = mockRequest()
     const promise = await sut.handle(request)
     expect(promise).toEqual(serverError(new Error()))
+  })
+
+  it('should returns 404 if LoadInvite returns null', async () => {
+    const { sut, loadInviteSpy } = makeSut()
+    jest.spyOn(loadInviteSpy, 'load').mockResolvedValueOnce(null)
+    const request = mockRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(notFound(new NotFoundError()))
   })
 })
