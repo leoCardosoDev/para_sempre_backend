@@ -1,4 +1,4 @@
-import { CheckEmailRepository } from '@/application/protocols/db/email'
+import { CheckEmailRepository } from '@/domain/email'
 
 export class CheckEmailRepositorySpy implements CheckEmailRepository {
   result = false

@@ -1,8 +1,9 @@
 import { CreateInviteParams, CreateInviteResult } from '@/domain/usecases/invite'
 import { CreateInviteRepository, LoadInviteByCodeRepository, LoadInviteByCodeRepositoryResult } from '@/application/protocols/db/invite'
+import { CheckEmailRepository, CheckEmailRepositoryResult } from '@/domain/email'
 import { MongoHelper } from '@/infra/db/mongo'
 
-export class InviteMongoRepository implements CreateInviteRepository, LoadInviteByCodeRepository {
+export class InviteMongoRepository implements CreateInviteRepository, CheckEmailRepository, LoadInviteByCodeRepository {
   async createInvite(_inviteData: CreateInviteParams): Promise<CreateInviteResult> {
     const inviteCollection = await MongoHelper.getCollection('invites')
     const result = await inviteCollection.insertOne(_inviteData)
@@ -48,5 +49,11 @@ export class InviteMongoRepository implements CreateInviteRepository, LoadInvite
       inviteType: invite.inviteType,
       createdAt: invite.createdAt
     } as LoadInviteByCodeRepositoryResult
+  }
+
+  async checkByEmail(emailUser: string): Promise<CheckEmailRepositoryResult> {
+    const inviteCollection = await MongoHelper.getCollection('invites')
+    const emailInUse = await inviteCollection.findOne({ emailUser }, { projection: { _id: 1 } })
+    return !!emailInUse
   }
 }

@@ -64,4 +64,20 @@ describe('Invite Mongo Repository', () => {
       expect(invite).toBeNull()
     })
   })
+
+  describe('checkByEmail()', () => {
+    it('should return true if email is in use', async () => {
+      const sut = makeSut()
+      const createInvite = mockInviteParams()
+      await inviteCollection.insertOne(createInvite)
+      const emailInUse = await sut.checkByEmail(createInvite.emailUser)
+      expect(emailInUse).toBe(true)
+    })
+
+    it('should return false if email is not in use', async () => {
+      const sut = makeSut()
+      const emailInUse = await sut.checkByEmail(faker.internet.email())
+      expect(emailInUse).toBe(false)
+    })
+  })
 })
