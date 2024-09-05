@@ -30,15 +30,6 @@ describe('AccountMongoRepository', () => {
     jest.clearAllMocks()
   })
 
-  describe('create()', () => {
-    it('Should return an account on success', async () => {
-      const sut = makeSut()
-      const createAccountParams = mockAccountParams()
-      const isValid = await sut.create(createAccountParams)
-      expect(isValid).toBe(true)
-    })
-  })
-
   describe('loadByEmail()', () => {
     it('Should return an account on success', async () => {
       const sut = makeSut()

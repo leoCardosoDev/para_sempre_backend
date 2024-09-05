@@ -1,7 +1,4 @@
 import {
-  CreateAccountRepository,
-  CreateAccountRepositoryParams,
-  CreateAccountRepositoryResult,
   LoadAccountByEmailRepository,
   LoadAccountByEmailRepositoryResult,
   LoadAccountByTokenRepository,
@@ -10,17 +7,6 @@ import {
 } from '@/application/protocols'
 
 import { faker } from '@faker-js/faker'
-
-export class CreateAccountRepositorySpy implements CreateAccountRepository {
-  params: CreateAccountRepositoryParams
-  result = true
-
-  async create(data: CreateAccountRepositoryParams): Promise<CreateAccountRepositoryResult> {
-    this.params = data
-    return this.result
-  }
-}
-
 export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
   email: string
   result: { id: string; name: string; password: string } | null = {

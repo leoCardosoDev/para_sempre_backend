@@ -25,29 +25,6 @@ describe('Login Routes', () => {
     await accountCollection.deleteMany({})
   })
 
-  describe('POST /signup', () => {
-    it('Should return 200 on signup', async () => {
-      await request(app)
-        .post('/api/signup')
-        .send({
-          name: 'Leo',
-          email: 'leosilva@gmail.com',
-          password: '123',
-          passwordConfirmation: '123'
-        })
-        .expect(200)
-      await request(app)
-        .post('/api/signup')
-        .send({
-          name: 'Leo',
-          email: 'leosilva@gmail.com',
-          password: '123',
-          passwordConfirmation: '123'
-        })
-        .expect(403)
-    })
-  })
-
   describe('POST /login', () => {
     it('Should return 200 on login', async () => {
       const password = await hash('123', 12)
