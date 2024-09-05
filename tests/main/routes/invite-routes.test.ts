@@ -56,10 +56,10 @@ describe('Invite Routes', () => {
     await accountCollection.deleteMany({})
   })
 
-  describe('POST /invites', () => {
+  describe('POST /invites/create', () => {
     it('Should return 403 on create invite without accessToken', async () => {
       await request(app)
-        .post('/api/invites')
+        .post('/api/invites/create')
         .send({
           emailUser: 'leo@gmail.com',
           phoneUser: '00000000000',
@@ -75,7 +75,7 @@ describe('Invite Routes', () => {
     it('Should return 200 on invite', async () => {
       const accessToken = await mockAccessToken()
       await request(app)
-        .post('/api/invites')
+        .post('/api/invites/create')
         .set('x-access-token', accessToken)
         .send({
           emailUser: 'leo@gmail.com',
