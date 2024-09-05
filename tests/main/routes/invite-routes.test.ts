@@ -130,4 +130,47 @@ describe('Invite Routes', () => {
         })
     })
   })
+
+  describe('POST /invites/update', () => {
+    it('Should return 403 when getting invite without accessToken', async () => {
+      await request(app).post(`/api/invites/update`).send({ inviteCode: 'any_code' }).expect(403)
+    })
+
+    it('Should return 404 when invite is not found', async () => {
+      const accessToken = await mockAccessToken()
+      const invalidInviteCode = 'nonExistentInviteCode'
+      await request(app)
+        .post(`/api/invites/update`)
+        .set('x-access-token', accessToken)
+        .send({ inviteCode: invalidInviteCode, status: 'used', createdAt: '2024-08-20T17:20:34.000Z', expiration: '2024-09-20T17:20:34.000Z', usedAt: '2024-09-20T18:20:34.000Z' })
+        .expect(404)
+    })
+
+    it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
+      const accessToken = await mockAccessToken()
+      const inviteCode = faker.string.uuid()
+
+      await inviteCollection.insertOne({
+        accountId: faker.string.uuid(),
+        inviteCode,
+        emailUser: faker.internet.email(),
+        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+        status: faker.word.sample(),
+        inviteType: faker.word.sample(),
+        createdAt: faker.date.recent(),
+        expiration: faker.date.future(),
+        usedAt: null,
+        maxUses: faker.number.int({ min: 0, max: 1 })
+      })
+
+      await request(app)
+        .post(`/api/invites/update`)
+        .set('x-access-token', accessToken)
+        .send({ inviteCode, status: 'used', createdAt: '2024-08-20T17:20:34.000Z', expiration: '2024-09-20T17:20:34.000Z', usedAt: '2024-09-20T18:20:34.000Z' })
+        .expect(200)
+        .expect(response => {
+          expect(response.body).toBe(true)
+        })
+    })
+  })
 })
