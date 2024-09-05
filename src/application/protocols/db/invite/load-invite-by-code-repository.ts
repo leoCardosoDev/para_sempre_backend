@@ -3,10 +3,12 @@ export interface LoadInviteByCodeRepository {
 }
 
 export type LoadInviteByCodeRepositoryResult = {
+  inviteId: string
   accountId: string
   inviteCode: string
   emailUser: string
   phoneUser: string
   status: string
   expiration: Date
+  usedAt: Date | null
 } | null

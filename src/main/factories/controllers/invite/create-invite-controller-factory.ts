@@ -1,7 +1,7 @@
-import { CreateInviteController } from '@/presentation/controllers/invite'
+import { makeDbCreateInvite, makeLogControllerDecorator } from '@/main/factories'
+import { CreateInviteController } from '@/presentation/controllers'
+
 import { Controller } from '@/presentation/protocols'
-import { makeLogControllerDecorator } from '@/main/factories/decorators'
-import { makeDbCreateInvite } from '@/main/factories/usecases/create-invite-factory'
 import { makeCreateInviteValidation } from './create-invite-validation-factory'
 
 export const makeCreateInviteController = (): Controller => {

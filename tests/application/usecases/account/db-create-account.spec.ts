@@ -1,24 +1,24 @@
 import { DbCreateAccount } from '@/application/usecases'
 import { mockAccountParams, throwError } from '@/tests/domain/mocks'
-import { HasherSpy, CreateAccountRepositorySpy, CheckAccountByEmailRepositorySpy } from '@/tests/application/mocks'
+import { HasherSpy, CreateAccountRepositorySpy, CheckEmailRepositorySpy } from '@/tests/application/mocks'
 
 type SutTypes = {
   sut: DbCreateAccount
   hasherSpy: HasherSpy
   createAccountRepositorySpy: CreateAccountRepositorySpy
-  checkAccountByEmailRepositorySpy: CheckAccountByEmailRepositorySpy
+  checkEmailRepositorySpy: CheckEmailRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const checkAccountByEmailRepositorySpy = new CheckAccountByEmailRepositorySpy()
+  const checkEmailRepositorySpy = new CheckEmailRepositorySpy()
   const hasherSpy = new HasherSpy()
   const createAccountRepositorySpy = new CreateAccountRepositorySpy()
-  const sut = new DbCreateAccount(hasherSpy, createAccountRepositorySpy, checkAccountByEmailRepositorySpy)
+  const sut = new DbCreateAccount(hasherSpy, createAccountRepositorySpy, checkEmailRepositorySpy)
   return {
     sut,
     hasherSpy,
     createAccountRepositorySpy,
-    checkAccountByEmailRepositorySpy
+    checkEmailRepositorySpy
   }
 }
 
@@ -69,16 +69,16 @@ describe('DbCreateAccount Usecase', () => {
   })
 
   it('Should return false if CheckAccountByEmailRepository returns true', async () => {
-    const { sut, checkAccountByEmailRepositorySpy } = makeSut()
-    checkAccountByEmailRepositorySpy.result = true
+    const { sut, checkEmailRepositorySpy } = makeSut()
+    checkEmailRepositorySpy.result = true
     const isValid = await sut.create(mockAccountParams())
     expect(isValid).toBe(false)
   })
 
   it('Should call LoadAccountByEmailRepository with correct email', async () => {
-    const { sut, checkAccountByEmailRepositorySpy } = makeSut()
+    const { sut, checkEmailRepositorySpy } = makeSut()
     const addAccountParams = mockAccountParams()
     await sut.create(addAccountParams)
-    expect(checkAccountByEmailRepositorySpy.email).toBe(addAccountParams.email)
+    expect(checkEmailRepositorySpy.email).toBe(addAccountParams.email)
   })
 })

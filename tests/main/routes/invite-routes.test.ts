@@ -6,7 +6,6 @@ import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
 import request from 'supertest'
-import { faker } from '@faker-js/faker'
 
 let inviteCollection: Collection
 let accountCollection: Collection
@@ -45,6 +44,10 @@ describe('Invite Routes', () => {
     await MongoHelper.disconnect()
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   beforeEach(async () => {
     inviteCollection = MongoHelper.getCollection('invites')
     await inviteCollection.deleteMany({})
@@ -52,10 +55,10 @@ describe('Invite Routes', () => {
     await accountCollection.deleteMany({})
   })
 
-  describe('POST /invites', () => {
+  describe('POST /invites/create', () => {
     it('Should return 403 on create invite without accessToken', async () => {
       await request(app)
-        .post('/api/invites')
+        .post('/api/invites/create')
         .send({
           emailUser: 'leo@gmail.com',
           phoneUser: '00000000000',
@@ -71,7 +74,7 @@ describe('Invite Routes', () => {
     it('Should return 200 on invite', async () => {
       const accessToken = await mockAccessToken()
       await request(app)
-        .post('/api/invites')
+        .post('/api/invites/create')
         .set('x-access-token', accessToken)
         .send({
           emailUser: 'leo@gmail.com',
@@ -85,43 +88,108 @@ describe('Invite Routes', () => {
         .expect(200)
     })
   })
-  describe('GET /invites/:inviteCode/results', () => {
+
+  describe('POST /invites/result', () => {
     it('Should return 403 when getting invite without accessToken', async () => {
-      await request(app).get(`/api/invites/any_code/results`).expect(403)
+      await request(app).post(`/api/invites/result`).send({ inviteCode: 'any_code' }).expect(403)
     })
 
     it('Should return 404 when invite is not found', async () => {
       const accessToken = await mockAccessToken()
-      const invalidInviteCode = 'nonExistentInviteCode' // Usar um código que não existe
-      await request(app).get(`/api/invites/${invalidInviteCode}/results`).set('x-access-token', accessToken).expect(404)
+      const invalidInviteCode = 'nonExistentInviteCode'
+      await request(app).post(`/api/invites/result`).set('x-access-token', accessToken).send({ inviteCode: invalidInviteCode }).expect(404)
     })
 
     it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
       const accessToken = await mockAccessToken()
-      const inviteCode = faker.string.uuid() // Gerando um código único para o teste
+      const inviteCode = 'wedfrdfr'
 
       await inviteCollection.insertOne({
-        accountId: faker.string.uuid(),
+        accountId: '1234',
         inviteCode,
-        emailUser: faker.internet.email(),
-        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
-        status: faker.word.sample(),
-        inviteType: faker.word.sample(),
-        createdAt: faker.date.recent(),
-        expiration: faker.date.future(),
+        emailUser: 'leo@gmail.com',
+        phoneUser: '00000000000',
+        status: 'created',
+        inviteType: 'standart',
+        createdAt: '2024-08-20T17:20:34.000Z',
+        expiration: '2024-09-20T17:20:34.000Z',
         usedAt: null,
-        maxUses: faker.number.int({ min: 0, max: 1 })
+        maxUses: 1
       })
 
       await request(app)
-        .get(`/api/invites/${inviteCode}/results`) // Usando inviteCode ao invés de insertedId
+        .post(`/api/invites/result`)
         .set('x-access-token', accessToken)
+        .send({ inviteCode })
         .expect(200)
         .expect(response => {
-          expect(response.body).toHaveProperty('id')
+          expect(response.body).toHaveProperty('inviteId')
           expect(response.body).toHaveProperty('emailUser')
           expect(response.body).toHaveProperty('status')
-          // Adicione mais verificações conforme necessário
+        })
+    })
+  })
+
+  describe('POST /invites/update', () => {
+    it('Should return 403 when getting invite without accessToken', async () => {
+      await request(app).post(`/api/invites/update`).send({ inviteCode: 'any_code' }).expect(403)
+    })
+
+    it('Should return 404 when invite is not found', async () => {
+      const accessToken = await mockAccessToken()
+      const invalidInviteCode = 'nonExistentInviteCode'
+      await request(app)
+        .post(`/api/invites/update`)
+        .set('x-access-token', accessToken)
+        .send({
+          inviteCode: invalidInviteCode,
+          status: 'used',
+          createdAt: '2024-08-20T17:20:34.000Z',
+          expiration: '2024-09-20T17:20:34.000Z',
+          usedAt: '2024-09-20T18:20:34.000Z',
+          accountId: '1234',
+          emailUser: 'leo@gmail.com',
+          phoneUser: '00000000000',
+          inviteType: 'standart',
+          maxUses: 1
+        })
+        .expect(404)
+    })
+
+    it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
+      const accessToken = await mockAccessToken()
+      const inviteCode = 'wedfrdfr'
+
+      await inviteCollection.insertOne({
+        accountId: '1234',
+        inviteCode,
+        status: 'active',
+        createdAt: '2024-08-20T17:20:34.000Z',
+        expiration: '2024-09-20T17:20:34.000Z',
+        usedAt: null,
+        emailUser: 'leo@gmail.com',
+        phoneUser: '00000000000',
+        inviteType: 'standart',
+        maxUses: 1
+      })
+
+      await request(app)
+        .post(`/api/invites/update`)
+        .set('x-access-token', accessToken)
+        .send({
+          inviteCode,
+          status: 'used',
+          createdAt: '2024-08-20T17:20:34.000Z',
+          expiration: '2024-09-20T17:20:34.000Z',
+          usedAt: '2024-09-20T18:20:34.000Z',
+          emailUser: 'leo@gmail.com',
+          phoneUser: '00000000000',
+          inviteType: 'standart',
+          maxUses: 1
+        })
+        .expect(200)
+        .expect(response => {
+          expect(response.body).toBe(true)
         })
     })
   })

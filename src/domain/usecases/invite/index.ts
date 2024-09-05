@@ -1,2 +1,3 @@
 export * from './create-invite'
-export * from './load-invite-by-code'
+export * from './load-invite'
+export * from './update-invite'

@@ -4,21 +4,15 @@ import {
   LoadAccountByEmailRepository,
   UpdateAccessTokenRepository,
   LoadAccountByTokenRepository,
-  CheckAccountByEmailRepository,
   CreateAccountRepositoryParams,
   LoadAccountByEmailRepositoryResult,
-  CheckAccountByEmailRepositoryResult,
-  LoadAccountByTokenRepositoryResult
+  LoadAccountByTokenRepositoryResult,
+  CheckEmailRepository,
+  CheckEmailRepositoryResult
 } from '@/application/protocols/db'
-import { ObjectId, Document } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
-export interface AccountDocument extends Document {
-  name: string
-  email: string
-  password: string
-}
-
-export class AccountMongoRepository implements CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckAccountByEmailRepository {
+export class AccountMongoRepository implements CreateAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckEmailRepository {
   async create(data: CreateAccountRepositoryParams): Promise<boolean> {
     const accountCollection = MongoHelper.getCollection('accounts')
     const result = await accountCollection.insertOne(data)
@@ -42,7 +36,7 @@ export class AccountMongoRepository implements CreateAccountRepository, LoadAcco
     return account && MongoHelper.map(account)
   }
 
-  async checkByEmail(email: string): Promise<CheckAccountByEmailRepositoryResult> {
+  async checkByEmail(email: string): Promise<CheckEmailRepositoryResult> {
     const accountCollection = MongoHelper.getCollection('accounts')
     const account = await accountCollection.findOne(
       {

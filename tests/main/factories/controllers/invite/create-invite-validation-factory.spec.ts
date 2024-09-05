@@ -5,7 +5,7 @@ import { makeCreateInviteValidation } from '@/main/factories/controllers/invite'
 
 jest.mock('@/validation/validators/validation-composite')
 
-describe('InviteValidation Factory', () => {
+describe('CreateInviteValidation Factory', () => {
   it('Should call ValidationComposite with all validations', () => {
     makeCreateInviteValidation()
     const validations: Validation[] = []

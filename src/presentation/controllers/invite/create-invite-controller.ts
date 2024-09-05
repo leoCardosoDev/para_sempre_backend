@@ -1,3 +1,4 @@
+import { EmailInUseError, InvalidExpirationDateError } from '@/domain/errors'
 import { CreateInvite } from '@/domain/usecases/invite'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
@@ -11,13 +12,19 @@ export class CreateInviteController implements Controller {
   async handle(request: CreateInviteControllerParams): Promise<HttpResponse> {
     try {
       const error = this._validation.validate(request)
-      if (error) {
-        return badRequest(error)
+      if (error) return badRequest(error)
+      const inviteParams = {
+        ...request,
+        accountId: request.accountId,
+        createdAt: new Date(request.createdAt),
+        expiration: new Date(request.expiration),
+        usedAt: null
       }
-      const inviteData = { ...request, accountId: request.accountId, usedAt: null }
-      const result = await this._createInvite.create(inviteData)
+      const result = await this._createInvite.create(inviteParams)
       return ok(result)
     } catch (error) {
+      const errorInstanceof = error instanceof EmailInUseError || error instanceof InvalidExpirationDateError
+      if (errorInstanceof) return badRequest(error)
       return serverError(error as Error)
     }
   }
@@ -30,8 +37,8 @@ export type CreateInviteControllerParams = {
   phoneUser: string
   status: string
   inviteType: string
-  createdAt: Date
-  expiration: Date
-  usedAt: Date | null
+  createdAt: string
+  expiration: string
+  usedAt?: string
   maxUses: number
 }

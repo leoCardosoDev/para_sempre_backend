@@ -1,5 +1,6 @@
 import { HttpResponse } from '@/presentation/protocols'
 import { ServerError, UnauthorizedError } from '@/presentation/errors'
+import { convertDatesToISOString } from './convert-date-to-string'
 
 export const badRequest = (error: Error): HttpResponse => ({
   statusCode: 400,
@@ -28,7 +29,7 @@ export const serverError = (error: Error): HttpResponse => ({
 
 export const ok = (data: any): HttpResponse => ({
   statusCode: 200,
-  body: data
+  body: convertDatesToISOString(data)
 })
 
 export const noContent = (): HttpResponse => ({
