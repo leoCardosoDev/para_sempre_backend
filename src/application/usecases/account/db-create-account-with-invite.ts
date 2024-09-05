@@ -4,7 +4,8 @@ import { CreateAccountWithInvite, CreateAccountWithInviteParams, CreateAccountWi
 export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
   constructor(private readonly _loadInviteByCodeRepository: LoadInviteByCodeRepository) {}
   async create(accountData: CreateAccountWithInviteParams): Promise<CreateAccountWithInviteResult> {
-    await this._loadInviteByCodeRepository.loadByCode(accountData.inviteCode)
-    return new Promise(resolve => resolve({ success: false }))
+    const invite = await this._loadInviteByCodeRepository.loadByCode(accountData.inviteCode)
+    if (!invite || invite.status !== 'active') return { success: false, error: 'Invalid or used invite code' }
+    return { success: true }
   }
 }
