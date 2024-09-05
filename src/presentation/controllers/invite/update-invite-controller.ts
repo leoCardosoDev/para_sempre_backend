@@ -1,6 +1,6 @@
 import { LoadInvite, UpdateInvite } from '@/domain/usecases'
 import { NotFoundError } from '@/presentation/errors'
-import { badRequest, notFound, serverError } from '@/presentation/helpers'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers'
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 
 export class UpdateInviteController implements Controller {
@@ -24,10 +24,7 @@ export class UpdateInviteController implements Controller {
       }
       const result = await this._updateInvite.update(inviteUpdateData)
       if (!result) return notFound(new NotFoundError())
-      return {
-        statusCode: 400,
-        body: result
-      }
+      return ok(result)
     } catch (error) {
       return serverError(error as Error)
     }
