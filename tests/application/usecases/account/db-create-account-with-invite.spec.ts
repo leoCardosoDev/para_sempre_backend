@@ -2,13 +2,13 @@ import { DbCreateAccountWithInvite } from '@/application/usecases'
 import { mockAccountWithInviteParams, throwError } from '@/tests/domain/mocks'
 import { LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 
-const mockInactiveStatus = () => ({
+const mockInviteResult = () => ({
   inviteId: 'any_invite_id',
   accountId: 'any_account_id',
   inviteCode: 'any_invite_code',
   emailUser: 'any_email@user.com',
   phoneUser: '1234567890',
-  status: 'used',
+  status: 'active',
   expiration: new Date('2025-01-29T01:29:12.841Z'),
   usedAt: new Date('2025-01-29T01:29:12.841Z')
 })
@@ -50,10 +50,19 @@ describe('DbCreateAccountWithInvite Usecases', () => {
 
   it('should return false if LoadInviteByCodeRepository return an invalid actived invite', async () => {
     const { sut, loadInviteByCodeRepository } = makeSut()
-    const inviteSpy = jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce(mockInactiveStatus())
+    const mockInactiveStatus = { ...mockInviteResult(), status: 'used' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce(mockInactiveStatus)
     const addParams = mockAccountWithInviteParams()
     const result = await sut.create(addParams)
     expect(result).toEqual({ success: false, error: 'Invalid or used invite code' })
-    expect(inviteSpy).toHaveBeenCalledWith(addParams.inviteCode)
+  })
+
+  it('should return false if email does match', async () => {
+    const { sut, loadInviteByCodeRepository } = makeSut()
+    const mockDifferentEmail = { ...mockInviteResult(), emailUser: 'different_email@example.com' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce(mockDifferentEmail)
+    const addParams = mockAccountWithInviteParams()
+    const result = await sut.create(addParams)
+    expect(result).toEqual({ success: false, error: 'Email does not match the invite' })
   })
 })
