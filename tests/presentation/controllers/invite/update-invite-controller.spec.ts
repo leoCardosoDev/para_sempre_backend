@@ -102,4 +102,12 @@ describe('UpdateInvite Controller', () => {
     const promise = await sut.handle(request)
     expect(promise).toEqual(serverError(new Error()))
   })
+
+  it('should returns false if update fail', async () => {
+    const { sut, updateInviteSpy } = makeSut()
+    const request = mockRequest()
+    jest.spyOn(updateInviteSpy, 'update').mockResolvedValueOnce(false)
+    const result = await sut.handle(request)
+    expect(result).toEqual(notFound(new NotFoundError()))
+  })
 })
