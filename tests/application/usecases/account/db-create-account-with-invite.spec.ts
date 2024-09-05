@@ -77,4 +77,13 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     expect(checkByEmailSpy).toHaveBeenCalledWith(addParams.email)
     expect(checkByEmailSpy).toHaveBeenCalledTimes(1)
   })
+
+  it('should return false if CheckEmailRepository return true', async () => {
+    const { sut, loadInviteByCodeRepository, checkEmailRepositorySpy } = makeSut()
+    const addParams = { ...mockAccountWithInviteParams(), email: 'same_email@mail.com' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'same_email@mail.com' })
+    jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockReturnValueOnce(new Promise(resolve => resolve(true)))
+    const result = await sut.create(addParams)
+    expect(result).toEqual({ success: false, error: 'Email already registered' })
+  })
 })
