@@ -10,7 +10,11 @@ const mockRequest = (): UpdateInviteControllerParams => ({
   status: 'used',
   createdAt: faker.date.past().toISOString(),
   expiration: faker.date.future().toISOString(),
-  usedAt: faker.date.recent().toISOString()
+  usedAt: faker.date.recent().toISOString(),
+  emailUser: faker.internet.email(),
+  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+  inviteType: faker.word.sample(),
+  maxUses: faker.number.int({ min: 0, max: 1 })
 })
 
 const mockInviteResult = (): any => ({
@@ -78,6 +82,7 @@ describe('UpdateInvite Controller', () => {
     const request = mockRequest()
     await sut.handle(request)
     const expectedUpdateData = {
+      ...request,
       inviteCode: request.inviteCode,
       status: request.status,
       createdAt: new Date(request.createdAt),

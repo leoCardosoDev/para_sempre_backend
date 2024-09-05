@@ -16,6 +16,7 @@ export class UpdateInviteController implements Controller {
       const loadInvite = await this._loadInvite.load({ inviteCode: request.inviteCode })
       if (!loadInvite) return notFound(new NotFoundError())
       const inviteUpdateData = {
+        ...request,
         inviteCode: request.inviteCode,
         status: request.status,
         createdAt: new Date(request.createdAt),
@@ -37,4 +38,8 @@ export type UpdateInviteControllerParams = {
   createdAt: string
   expiration: string
   usedAt: string
+  emailUser: string
+  phoneUser: string
+  inviteType: string
+  maxUses: number
 }

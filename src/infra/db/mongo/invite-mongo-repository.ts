@@ -71,6 +71,7 @@ export class InviteMongoRepository implements CreateInviteRepository, CheckEmail
       { inviteCode: invite.inviteCode },
       {
         $set: {
+          ...invite,
           status: invite.status,
           expiration: invite.expiration,
           usedAt: invite.usedAt

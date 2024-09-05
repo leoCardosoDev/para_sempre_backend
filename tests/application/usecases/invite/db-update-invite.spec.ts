@@ -14,7 +14,11 @@ const mockInviteCode = (): UpdateInviteParams => ({
   inviteCode: faker.lorem.word(),
   status: faker.lorem.word(),
   expiration: new Date(),
-  usedAt: new Date()
+  usedAt: new Date(),
+  emailUser: faker.internet.email(),
+  phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+  inviteType: faker.word.sample(),
+  maxUses: faker.number.int({ min: 0, max: 1 })
 })
 
 const mockInviteResult = (): any => ({

@@ -7,6 +7,10 @@ export type UpdateInviteParams = {
   status: string
   expiration: Date
   usedAt: Date
+  emailUser: string
+  phoneUser: string
+  inviteType: string
+  maxUses: number
 }
 
 export type UpdateInviteResult = boolean

@@ -6,7 +6,6 @@ import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
 import request from 'supertest'
-import { faker } from '@faker-js/faker'
 
 let inviteCollection: Collection
 let accountCollection: Collection
@@ -103,19 +102,19 @@ describe('Invite Routes', () => {
 
     it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
       const accessToken = await mockAccessToken()
-      const inviteCode = faker.string.uuid()
+      const inviteCode = 'wedfrdfr'
 
       await inviteCollection.insertOne({
-        accountId: faker.string.uuid(),
+        accountId: '1234',
         inviteCode,
-        emailUser: faker.internet.email(),
-        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
-        status: faker.word.sample(),
-        inviteType: faker.word.sample(),
-        createdAt: faker.date.recent(),
-        expiration: faker.date.future(),
+        emailUser: 'leo@gmail.com',
+        phoneUser: '00000000000',
+        status: 'created',
+        inviteType: 'standart',
+        createdAt: '2024-08-20T17:20:34.000Z',
+        expiration: '2024-09-20T17:20:34.000Z',
         usedAt: null,
-        maxUses: faker.number.int({ min: 0, max: 1 })
+        maxUses: 1
       })
 
       await request(app)
@@ -142,31 +141,52 @@ describe('Invite Routes', () => {
       await request(app)
         .post(`/api/invites/update`)
         .set('x-access-token', accessToken)
-        .send({ inviteCode: invalidInviteCode, status: 'used', createdAt: '2024-08-20T17:20:34.000Z', expiration: '2024-09-20T17:20:34.000Z', usedAt: '2024-09-20T18:20:34.000Z' })
+        .send({
+          inviteCode: invalidInviteCode,
+          status: 'used',
+          createdAt: '2024-08-20T17:20:34.000Z',
+          expiration: '2024-09-20T17:20:34.000Z',
+          usedAt: '2024-09-20T18:20:34.000Z',
+          accountId: '1234',
+          emailUser: 'leo@gmail.com',
+          phoneUser: '00000000000',
+          inviteType: 'standart',
+          maxUses: 1
+        })
         .expect(404)
     })
 
     it('Should return 200 and the invite data when getting invite with valid accessToken and inviteCode', async () => {
       const accessToken = await mockAccessToken()
-      const inviteCode = faker.string.uuid()
+      const inviteCode = 'wedfrdfr'
 
       await inviteCollection.insertOne({
-        accountId: faker.string.uuid(),
+        accountId: '1234',
         inviteCode,
-        emailUser: faker.internet.email(),
-        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
-        status: faker.word.sample(),
-        inviteType: faker.word.sample(),
-        createdAt: faker.date.recent(),
-        expiration: faker.date.future(),
+        status: 'active',
+        createdAt: '2024-08-20T17:20:34.000Z',
+        expiration: '2024-09-20T17:20:34.000Z',
         usedAt: null,
-        maxUses: faker.number.int({ min: 0, max: 1 })
+        emailUser: 'leo@gmail.com',
+        phoneUser: '00000000000',
+        inviteType: 'standart',
+        maxUses: 1
       })
 
       await request(app)
         .post(`/api/invites/update`)
         .set('x-access-token', accessToken)
-        .send({ inviteCode, status: 'used', createdAt: '2024-08-20T17:20:34.000Z', expiration: '2024-09-20T17:20:34.000Z', usedAt: '2024-09-20T18:20:34.000Z' })
+        .send({
+          inviteCode,
+          status: 'used',
+          createdAt: '2024-08-20T17:20:34.000Z',
+          expiration: '2024-09-20T17:20:34.000Z',
+          usedAt: '2024-09-20T18:20:34.000Z',
+          emailUser: 'leo@gmail.com',
+          phoneUser: '00000000000',
+          inviteType: 'standart',
+          maxUses: 1
+        })
         .expect(200)
         .expect(response => {
           expect(response.body).toBe(true)

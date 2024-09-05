@@ -89,7 +89,11 @@ describe('Invite Mongo Repository', () => {
         inviteCode: createInvite.inviteCode,
         status: 'updated_status',
         expiration: faker.date.future(),
-        usedAt: new Date()
+        usedAt: new Date(),
+        emailUser: faker.internet.email(),
+        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+        inviteType: faker.word.sample(),
+        maxUses: faker.number.int({ min: 0, max: 1 })
       }
       const updateResult = await sut.updateByCode(updatedFields)
       const updatedInvite = await inviteCollection.findOne({ inviteCode: createInvite.inviteCode })
@@ -106,7 +110,11 @@ describe('Invite Mongo Repository', () => {
         inviteCode: 'non_existing_invite_code',
         status: 'updated_status',
         expiration: faker.date.future(),
-        usedAt: new Date()
+        usedAt: new Date(),
+        emailUser: faker.internet.email(),
+        phoneUser: faker.string.numeric({ length: { min: 10, max: 12 } }),
+        inviteType: faker.word.sample(),
+        maxUses: faker.number.int({ min: 0, max: 1 })
       })
       expect(updateResult).toBe(false)
     })
