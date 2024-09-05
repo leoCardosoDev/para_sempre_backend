@@ -22,8 +22,12 @@ export class UpdateInviteController implements Controller {
         expiration: new Date(request.expiration),
         usedAt: new Date()
       }
-      await this._updateInvite.update(inviteUpdateData)
-      return new Promise(resolve => resolve({ statusCode: 200, body: null }))
+      const result = await this._updateInvite.update(inviteUpdateData)
+      if (!result) return notFound(new NotFoundError())
+      return {
+        statusCode: 400,
+        body: result
+      }
     } catch (error) {
       return serverError(error as Error)
     }
