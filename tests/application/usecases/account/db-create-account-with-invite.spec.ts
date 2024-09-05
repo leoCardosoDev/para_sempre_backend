@@ -1,5 +1,5 @@
 import { DbCreateAccountWithInvite } from '@/application/usecases'
-import { mockAccountWithInviteParams } from '@/tests/domain/mocks'
+import { mockAccountWithInviteParams, throwError } from '@/tests/domain/mocks'
 import { LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 
 type SutTypes = {
@@ -19,5 +19,13 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     const addParams = mockAccountWithInviteParams()
     await sut.create(addParams)
     expect(loadInviteByCodeRepository.inviteCode).toEqual(addParams.inviteCode)
+  })
+
+  it('should throw if LoadInviteByCodeRepository throws', async () => {
+    const { sut, loadInviteByCodeRepository } = makeSut()
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockImplementationOnce(throwError)
+    const addParams = mockAccountWithInviteParams()
+    const promise = sut.create(addParams)
+    await expect(promise).rejects.toThrow()
   })
 })
