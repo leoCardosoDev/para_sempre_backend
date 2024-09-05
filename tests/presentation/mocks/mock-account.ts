@@ -1,16 +1,6 @@
-import { CreateAccount, Authentication, LoadAccountByToken, CreateAccountParams, CreateAccountResult, AuthenticationParams, AuthenticationResult, LoadAccountByTokenResult } from '@/domain/usecases'
+import { Authentication, LoadAccountByToken, AuthenticationParams, AuthenticationResult, LoadAccountByTokenResult } from '@/domain/usecases'
 
 import { faker } from '@faker-js/faker'
-
-export class CreateAccountSpy implements CreateAccount {
-  params: CreateAccountParams
-  result = true
-
-  async create (params: CreateAccountParams): Promise<CreateAccountResult> {
-    this.params = params
-    return this.result
-  }
-}
 
 export class AuthenticationSpy implements Authentication {
   params: AuthenticationParams
@@ -19,7 +9,7 @@ export class AuthenticationSpy implements Authentication {
     name: faker.person.fullName()
   }
 
-  async auth (params: AuthenticationParams): Promise<AuthenticationResult> {
+  async auth(params: AuthenticationParams): Promise<AuthenticationResult> {
     this.params = params
     return this.result
   }
@@ -28,11 +18,11 @@ export class AuthenticationSpy implements Authentication {
 export class LoadAccountByTokenSpy implements LoadAccountByToken {
   accessToken: string
   role?: string
-  result: {id: string } | null = {
+  result: { id: string } | null = {
     id: faker.string.uuid()
   }
 
-  async load (accessToken: string, role?: string): Promise<LoadAccountByTokenResult> {
+  async load(accessToken: string, role?: string): Promise<LoadAccountByTokenResult> {
     this.accessToken = accessToken
     this.role = role
     return this.result ?? null
