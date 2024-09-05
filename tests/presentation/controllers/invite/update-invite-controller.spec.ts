@@ -3,7 +3,7 @@ import { ValidationSpy } from '@/tests/presentation/mocks'
 import { LoadInviteSpy, throwError, UpdateInviteSpy } from '@/tests/domain/mocks'
 import { UpdateInviteController, UpdateInviteControllerParams } from '@/presentation/controllers'
 import { MissingParamError, NotFoundError } from '@/presentation/errors'
-import { badRequest, notFound, serverError } from '@/presentation/helpers'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers'
 
 const mockRequest = (): UpdateInviteControllerParams => ({
   inviteCode: faker.string.uuid(),
@@ -109,5 +109,13 @@ describe('UpdateInvite Controller', () => {
     jest.spyOn(updateInviteSpy, 'update').mockResolvedValueOnce(false)
     const result = await sut.handle(request)
     expect(result).toEqual(notFound(new NotFoundError()))
+  })
+
+  it('should return 200 on success', async () => {
+    const { sut, loadInviteSpy } = makeSut()
+    jest.spyOn(loadInviteSpy, 'load').mockResolvedValueOnce(mockInviteResult())
+    const request = mockRequest()
+    const result = await sut.handle(request)
+    expect(result).toEqual(ok(true))
   })
 })
