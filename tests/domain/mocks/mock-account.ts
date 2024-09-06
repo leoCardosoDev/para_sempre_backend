@@ -8,12 +8,6 @@ export const mockAccountWithInviteParams = (): CreateAccountWithInviteParams => 
   inviteCode: faker.internet.password()
 })
 
-export const mockAccountParams = (): any => ({
-  name: faker.person.fullName(),
-  email: faker.internet.email(),
-  password: faker.internet.password()
-})
-
 export const mockAuthenticationParams = (): AuthenticationParams => ({
   email: faker.internet.email(),
   password: faker.internet.password()
