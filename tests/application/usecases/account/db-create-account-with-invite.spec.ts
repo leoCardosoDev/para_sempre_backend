@@ -49,7 +49,7 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce(null)
     const addParams = mockAccountWithInviteParams()
     const result = await sut.create(addParams)
-    expect(result).toEqual({ success: false, error: 'Invalid or used invite code' })
+    expect(result).toEqual({ success: false, error: 'Invalid invite code' })
   })
 
   it('should return false if LoadInviteByCodeRepository return an invalid actived invite', async () => {
@@ -58,7 +58,7 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce(mockInactiveStatus)
     const addParams = mockAccountWithInviteParams()
     const result = await sut.create(addParams)
-    expect(result).toEqual({ success: false, error: 'Invalid or used invite code' })
+    expect(result).toEqual({ success: false, error: 'Used invite code' })
   })
 
   it('should return false if email does match', async () => {
@@ -95,5 +95,14 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'same_email@mail.com' })
     await sut.create(addParams)
     expect(hasherSpy.plaintext).toBe(addParams.password)
+  })
+
+  it('Should throw if Hasher throws', async () => {
+    const { sut, loadInviteByCodeRepository, hasherSpy } = makeSut()
+    jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(throwError)
+    const addParams = { ...mockAccountWithInviteParams(), email: 'same_email@mail.com' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'same_email@mail.com' })
+    const promise = sut.create(addParams)
+    await expect(promise).rejects.toThrow()
   })
 })
