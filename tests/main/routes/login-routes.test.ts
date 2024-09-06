@@ -7,6 +7,7 @@ import request from 'supertest'
 import { hash } from 'bcryptjs'
 
 let accountCollection: Collection
+let inviteCollection: Collection
 let app: Express
 
 describe('Login Routes', () => {
@@ -21,8 +22,48 @@ describe('Login Routes', () => {
   })
 
   beforeEach(async () => {
+    inviteCollection = MongoHelper.getCollection('invites')
+    await inviteCollection.deleteMany({})
     accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
+  })
+
+  describe('POST /signup', () => {
+    it('Should return 200 on signup', async () => {
+      const inviteCode = 'wedfrdfr'
+      await inviteCollection.insertOne({
+        accountId: '1234',
+        inviteCode,
+        emailUser: 'leosilva@gmail.com',
+        phoneUser: '00000000000',
+        status: 'created',
+        inviteType: 'standart',
+        createdAt: '2024-08-20T17:20:34.000Z',
+        expiration: '2024-09-20T17:20:34.000Z',
+        usedAt: null,
+        maxUses: 1
+      })
+      await request(app)
+        .post('/api/signup')
+        .send({
+          name: 'Leo',
+          email: 'leosilva@gmail.com',
+          password: '123',
+          passwordConfirmation: '123',
+          inviteCode: 'wedfrdfr'
+        })
+        .expect(200)
+      await request(app)
+        .post('/api/signup')
+        .send({
+          name: 'Leo',
+          email: 'leosilva@gmail.com',
+          password: '123',
+          passwordConfirmation: '123',
+          inviteCode: '123'
+        })
+        .expect(403)
+    })
   })
 
   describe('POST /login', () => {
