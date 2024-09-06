@@ -6,11 +6,18 @@ import {
   LoadAccountByEmailRepositoryResult,
   LoadAccountByTokenRepositoryResult,
   CheckEmailRepository,
-  CheckEmailRepositoryResult
+  CheckEmailRepositoryResult,
+  CreateAccountWithInviteRepositoryParams
 } from '@/application/protocols/db'
 import { ObjectId } from 'mongodb'
 
 export class AccountMongoRepository implements LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, CheckEmailRepository {
+  async create(data: CreateAccountWithInviteRepositoryParams): Promise<boolean> {
+    const accountCollection = MongoHelper.getCollection('accounts')
+    const result = await accountCollection.insertOne(data)
+    return result.insertedId !== null
+  }
+
   async loadByEmail(email: string): Promise<LoadAccountByEmailRepositoryResult> {
     const accountCollection = MongoHelper.getCollection('accounts')
     const account = await accountCollection.findOne(
