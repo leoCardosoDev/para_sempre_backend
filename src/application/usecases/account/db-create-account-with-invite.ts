@@ -9,7 +9,8 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
   ) {}
   async create(accountData: CreateAccountWithInviteParams): Promise<CreateAccountWithInviteResult> {
     const invite = await this._loadInviteByCodeRepository.loadByCode(accountData.inviteCode)
-    if (!invite || invite.status !== 'active') return { success: false, error: 'Invalid or used invite code' }
+    if (!invite) return { success: false, error: 'Invalid invite code' }
+    if (invite.status === 'used') return { success: false, error: 'Used invite code' }
     if (invite.emailUser !== accountData.email) return { success: false, error: 'Email does not match the invite' }
     const emailExist = await this._checkEmailRepository.checkByEmail(accountData.email)
     if (emailExist) return { success: false, error: 'Email already registered' }
