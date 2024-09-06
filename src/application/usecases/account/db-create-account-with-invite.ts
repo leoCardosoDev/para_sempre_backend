@@ -11,12 +11,17 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
   ) {}
 
   async create(accountData: CreateAccountWithInviteParams): Promise<CreateAccountWithInviteResult> {
+    const errors: string[] = []
     const invite = await this._loadInviteByCodeRepository.loadByCode(accountData.inviteCode)
-    if (!invite) return { success: false, error: 'Invalid invite code' }
-    if (invite.status === 'used') return { success: false, error: 'Used invite code' }
-    if (invite.emailUser !== accountData.email) return { success: false, error: 'Email does not match the invite' }
+    if (!invite) {
+      errors.push('Invalid invite code')
+      return { success: false, error: errors }
+    }
+    if (invite.status === 'used') errors.push('Used invite code')
+    if (invite.emailUser !== accountData.email) errors.push('Email does not match the invite')
     const emailExist = await this._checkEmailRepository.checkByEmail(accountData.email)
-    if (emailExist) return { success: false, error: 'Email already registered' }
+    if (emailExist) errors.push('Email already registered')
+    if (errors.length > 0) return { success: false, error: errors }
     const hashedPassword = await this._hasher.hash(accountData.password)
     const accountDataWithoutInviteCode: OmitInviteCode<CreateAccountWithInviteParams> = {
       name: accountData.name,
@@ -27,16 +32,16 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
     const createResult = await this._createAccountWithInviteRepository.create(accountDataWithoutInviteCode)
     if (createResult.success) {
       await this._updateInviteRepository.updateByCode({
-        inviteCode: invite.inviteCode,
+        inviteCode: invite!.inviteCode,
         status: 'used',
-        expiration: invite.expiration,
+        expiration: invite!.expiration,
         usedAt: new Date(),
-        emailUser: invite.emailUser,
-        phoneUser: invite.phoneUser,
+        emailUser: invite!.emailUser,
+        phoneUser: invite!.phoneUser,
         inviteType: 'standart',
         maxUses: 2
       })
     }
-    return { ...createResult, inviteId: invite.inviteId }
+    return { ...createResult, inviteId: invite!.inviteId }
   }
 }

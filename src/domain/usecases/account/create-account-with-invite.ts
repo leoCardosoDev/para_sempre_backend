@@ -13,5 +13,5 @@ export type CreateAccountWithInviteParams = {
 export type CreateAccountWithInviteResult = {
   success: boolean
   inviteId?: string
-  error?: string
+  error?: string[]
 }
