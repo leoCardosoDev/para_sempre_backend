@@ -1,10 +1,10 @@
 import { SignUpController, SignUpControllerRequest } from '@/presentation/controllers'
-import { MissingParamError, ServerError, EmailInUseError } from '@/presentation/errors'
-import { ok, serverError, badRequest, forbidden } from '@/presentation/helpers'
-import { AuthenticationSpy, ValidationSpy, CreateAccountSpy } from '@/tests/presentation/mocks'
-import { throwError } from '@/tests/domain/mocks'
-
 import { faker } from '@faker-js/faker'
+import { AuthenticationSpy, ValidationSpy } from '@/tests/presentation/mocks'
+import { CreateAccountWithInviteSpy, throwError } from '@/tests/domain/mocks'
+import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers'
+import { MissingParamError, ServerError } from '@/presentation/errors'
+import { CustomError } from '@/presentation/errors/custom-error'
 
 const mockRequest = (): SignUpControllerRequest => {
   const password = faker.internet.password()
@@ -12,25 +12,26 @@ const mockRequest = (): SignUpControllerRequest => {
     name: faker.person.fullName(),
     email: faker.internet.email(),
     password,
-    passwordConfirmation: password
+    passwordConfirmation: password,
+    inviteCode: faker.string.uuid()
   }
 }
 
 type SutTypes = {
   sut: SignUpController
-  createAccountSpy: CreateAccountSpy
+  createAccountWithInviteSpy: CreateAccountWithInviteSpy
   validationSpy: ValidationSpy
   authenticationSpy: AuthenticationSpy
 }
 
 const makeSut = (): SutTypes => {
   const authenticationSpy = new AuthenticationSpy()
-  const createAccountSpy = new CreateAccountSpy()
+  const createAccountWithInviteSpy = new CreateAccountWithInviteSpy()
   const validationSpy = new ValidationSpy()
-  const sut = new SignUpController(createAccountSpy, validationSpy, authenticationSpy)
+  const sut = new SignUpController(createAccountWithInviteSpy, validationSpy, authenticationSpy)
   return {
     sut,
-    createAccountSpy,
+    createAccountWithInviteSpy,
     validationSpy,
     authenticationSpy
   }
@@ -38,34 +39,66 @@ const makeSut = (): SutTypes => {
 
 describe('SignUp Controller', () => {
   it('Should return 500 if CreateAccount throws', async () => {
-    const { sut, createAccountSpy } = makeSut()
-    jest.spyOn(createAccountSpy, 'create').mockImplementationOnce(throwError)
+    const { sut, createAccountWithInviteSpy } = makeSut()
+    jest.spyOn(createAccountWithInviteSpy, 'create').mockImplementationOnce(throwError)
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new ServerError('No stack trace available')))
   })
 
   it('Should call CreateAccount with correct values', async () => {
-    const { sut, createAccountSpy } = makeSut()
+    const { sut, createAccountWithInviteSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
-    expect(createAccountSpy.params).toEqual({
+    expect(createAccountWithInviteSpy.params).toEqual({
       name: request.name,
       email: request.email,
-      password: request.password
+      password: request.password,
+      inviteCode: request.inviteCode
     })
   })
 
-  it('Should return 403 if CreateAccount returns false', async () => {
-    const { sut, createAccountSpy } = makeSut()
-    createAccountSpy.result = false
+  it('Should return 403 if invalid code is provided', async () => {
+    const { sut, createAccountWithInviteSpy } = makeSut()
+    createAccountWithInviteSpy.result = { success: false, error: ['Invalid invite code'] }
     const httpResponse = await sut.handle(mockRequest())
-    expect(httpResponse).toEqual(forbidden(new EmailInUseError()))
+    expect(httpResponse).toEqual(forbidden(new CustomError('Invalid invite code')))
+  })
+
+  it('Should return 403 if invalid code is used', async () => {
+    const { sut, createAccountWithInviteSpy } = makeSut()
+    createAccountWithInviteSpy.result = { success: false, error: ['Used invite code'] }
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new CustomError('Used invite code')))
+  })
+
+  it('Should return 403 if email does match', async () => {
+    const { sut, createAccountWithInviteSpy } = makeSut()
+    createAccountWithInviteSpy.result = { success: false, error: ['Email does not match the invite'] }
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new CustomError('Email does not match the invite')))
+  })
+
+  it('Should return 403 if email is already registered', async () => {
+    const { sut, createAccountWithInviteSpy } = makeSut()
+    createAccountWithInviteSpy.result = { success: false, error: ['Email already registered'] }
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new CustomError('Email already registered')))
   })
 
   it('Should return 200 if valid data is provided', async () => {
     const { sut, authenticationSpy } = makeSut()
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(ok(authenticationSpy.result))
+  })
+
+  it('should return "Unknown error" if errorMessages is undefined or empty', async () => {
+    const { sut, createAccountWithInviteSpy } = makeSut()
+    createAccountWithInviteSpy.result = { success: false, error: undefined }
+    let httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new CustomError('Unknown error')))
+    createAccountWithInviteSpy.result = { success: false, error: [] }
+    httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new CustomError('Unknown error')))
   })
 
   it('Should call Validation with correct value', async () => {

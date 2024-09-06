@@ -9,7 +9,7 @@ describe('SignUpValidation Factory', () => {
   it('Should call ValidationComposite with all validations', () => {
     makeSignUpValidation()
     const validations: Validation[] = []
-    for (const field of ['name', 'email', 'password', 'passwordConfirmation']) {
+    for (const field of ['name', 'email', 'password', 'passwordConfirmation', 'inviteCode']) {
       validations.push(new RequiredFieldValidation(field))
     }
     validations.push(new CompareFieldsValidation('password', 'passwordConfirmation'))

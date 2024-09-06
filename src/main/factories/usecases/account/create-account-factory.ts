@@ -1,11 +1,12 @@
-import { DbCreateAccount } from '@/application/usecases'
-import { CreateAccount } from '@/domain/usecases'
-import { AccountMongoRepository } from '@/infra/db'
+import { DbCreateAccountWithInvite } from '@/application/usecases'
+import { CreateAccountWithInvite } from '@/domain/usecases'
 import { BcryptAdapter } from '@/infra/cryptography'
+import { AccountMongoRepository, InviteMongoRepository } from '@/infra/db'
 
-export const makeDbCreateAccount = (): CreateAccount => {
+export const makeDbCreateAccountWithInvite = (): CreateAccountWithInvite => {
   const salt = 12
   const bcryptAdapter = new BcryptAdapter(salt)
+  const inviteMongoRepository = new InviteMongoRepository()
   const accountMongoRepository = new AccountMongoRepository()
-  return new DbCreateAccount(bcryptAdapter, accountMongoRepository, accountMongoRepository)
+  return new DbCreateAccountWithInvite(inviteMongoRepository, accountMongoRepository, bcryptAdapter, accountMongoRepository, inviteMongoRepository)
 }
