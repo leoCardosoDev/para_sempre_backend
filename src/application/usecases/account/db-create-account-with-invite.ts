@@ -24,17 +24,19 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
       password: hashedPassword,
       inviteId: invite.inviteId
     }
-    await this._createAccountWithInviteRepository.create(accountDataWithoutInviteCode)
-    await this._updateInviteRepository.updateByCode({
-      inviteCode: invite.inviteCode,
-      status: 'used',
-      expiration: invite.expiration,
-      usedAt: new Date(),
-      emailUser: invite.emailUser,
-      phoneUser: invite.phoneUser,
-      inviteType: 'standart',
-      maxUses: 2
-    })
-    return { success: true }
+    const createResult = await this._createAccountWithInviteRepository.create(accountDataWithoutInviteCode)
+    if (createResult.success) {
+      await this._updateInviteRepository.updateByCode({
+        inviteCode: invite.inviteCode,
+        status: 'used',
+        expiration: invite.expiration,
+        usedAt: new Date(),
+        emailUser: invite.emailUser,
+        phoneUser: invite.phoneUser,
+        inviteType: 'standart',
+        maxUses: 2
+      })
+    }
+    return { ...createResult, inviteId: invite.inviteId }
   }
 }
