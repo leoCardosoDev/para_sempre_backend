@@ -3,7 +3,8 @@ import { CreateAccountWithInviteParams, CreateAccountWithInviteResult } from '@/
 export interface CreateAccountWithInviteRepository {
   create: (_data: CreateAccountWithInviteRepositoryParams) => Promise<CreateAccountWithInviteRepositoryResult>
 }
+export type OmitInviteCode<T> = Omit<T, 'inviteCode'>
 
-export type CreateAccountWithInviteRepositoryParams = CreateAccountWithInviteParams
+export type CreateAccountWithInviteRepositoryParams = OmitInviteCode<CreateAccountWithInviteParams>
 
 export type CreateAccountWithInviteRepositoryResult = CreateAccountWithInviteResult

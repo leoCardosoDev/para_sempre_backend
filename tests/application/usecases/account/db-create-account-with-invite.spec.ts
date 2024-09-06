@@ -3,7 +3,7 @@ import { mockAccountWithInviteParams, throwError } from '@/tests/domain/mocks'
 import { CheckEmailRepositorySpy, CreateAccountWithInviteRepositorySpy, HasherSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 
 const mockInviteResult = () => ({
-  inviteId: 'any_invite_id',
+  inviteId: 'last_invite_id',
   accountId: 'any_account_id',
   inviteCode: 'any_invite_code',
   emailUser: 'any_email@user.com',
@@ -117,7 +117,7 @@ describe('DbCreateAccountWithInvite Usecases', () => {
       name: addParams.name,
       email: addParams.email,
       password: hasherSpy.digest,
-      inviteCode: addParams.inviteCode
+      inviteId: loadInviteByCodeRepository.inviteId
     })
   })
 })

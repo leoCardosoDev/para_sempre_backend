@@ -1,4 +1,4 @@
-import { CheckEmailRepository, CreateAccountWithInviteRepository, Hasher, LoadInviteByCodeRepository } from '@/application/protocols'
+import { CheckEmailRepository, CreateAccountWithInviteRepository, Hasher, LoadInviteByCodeRepository, OmitInviteCode } from '@/application/protocols'
 import { CreateAccountWithInvite, CreateAccountWithInviteParams, CreateAccountWithInviteResult } from '@/domain/usecases'
 
 export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
@@ -8,6 +8,7 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
     private readonly _hasher: Hasher,
     private readonly _createAccountWithInviteRepository: CreateAccountWithInviteRepository
   ) {}
+
   async create(accountData: CreateAccountWithInviteParams): Promise<CreateAccountWithInviteResult> {
     const invite = await this._loadInviteByCodeRepository.loadByCode(accountData.inviteCode)
     if (!invite) return { success: false, error: 'Invalid invite code' }
@@ -16,7 +17,13 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
     const emailExist = await this._checkEmailRepository.checkByEmail(accountData.email)
     if (emailExist) return { success: false, error: 'Email already registered' }
     const hashedPassword = await this._hasher.hash(accountData.password)
-    await this._createAccountWithInviteRepository.create({ ...accountData, password: hashedPassword })
+    const accountDataWithoutInviteCode: OmitInviteCode<CreateAccountWithInviteParams> = {
+      name: accountData.name,
+      email: accountData.email,
+      password: hashedPassword,
+      inviteId: invite.inviteId
+    }
+    await this._createAccountWithInviteRepository.create(accountDataWithoutInviteCode)
     return { success: true }
   }
 }
