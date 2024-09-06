@@ -1,6 +1,6 @@
 import { DbCreateAccountWithInvite } from '@/application/usecases'
 import { mockAccountWithInviteParams, throwError } from '@/tests/domain/mocks'
-import { CheckEmailRepositorySpy, CreateAccountWithInviteRepositorySpy, HasherSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
+import { CheckEmailRepositorySpy, CreateAccountWithInviteRepositorySpy, HasherSpy, LoadInviteByCodeRepositorySpy, UpdateInviteRepositorySpy } from '@/tests/application/mocks'
 
 const mockInviteResult = () => ({
   inviteId: 'last_invite_id',
@@ -9,7 +9,7 @@ const mockInviteResult = () => ({
   emailUser: 'any_email@user.com',
   phoneUser: '1234567890',
   status: 'active',
-  expiration: new Date('2025-01-29T01:29:12.841Z'),
+  expiration: new Date('2024-09-06T16:06:32.697Z'),
   usedAt: null
 })
 
@@ -19,6 +19,7 @@ type SutTypes = {
   checkEmailRepositorySpy: CheckEmailRepositorySpy
   hasherSpy: HasherSpy
   createAccountWithInviteRepositorySpy: CreateAccountWithInviteRepositorySpy
+  updateInviteRepositorySpy: UpdateInviteRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
@@ -26,8 +27,9 @@ const makeSut = (): SutTypes => {
   const checkEmailRepositorySpy = new CheckEmailRepositorySpy()
   const hasherSpy = new HasherSpy()
   const createAccountWithInviteRepositorySpy = new CreateAccountWithInviteRepositorySpy()
-  const sut = new DbCreateAccountWithInvite(loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy, createAccountWithInviteRepositorySpy)
-  return { sut, loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy, createAccountWithInviteRepositorySpy }
+  const updateInviteRepositorySpy = new UpdateInviteRepositorySpy()
+  const sut = new DbCreateAccountWithInvite(loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy, createAccountWithInviteRepositorySpy, updateInviteRepositorySpy)
+  return { sut, loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy, createAccountWithInviteRepositorySpy, updateInviteRepositorySpy }
 }
 
 describe('DbCreateAccountWithInvite Usecases', () => {
@@ -120,4 +122,25 @@ describe('DbCreateAccountWithInvite Usecases', () => {
       inviteId: loadInviteByCodeRepository.inviteId
     })
   })
+
+  it('Should call UpdateInviteRepository with correct values', async () => {
+    const { sut, loadInviteByCodeRepository, updateInviteRepositorySpy } = makeSut()
+    const addParams = { ...mockAccountWithInviteParams(), email: 'any_email@user.com' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'any_email@user.com' })
+    await sut.create(addParams)
+    const currentDate = new Date()
+    const expirationDate = new Date('2024-09-06T16:06:32.697Z')
+    jest.spyOn(global, 'Date').mockImplementation(() => currentDate as unknown as Date)
+    expect(updateInviteRepositorySpy.params).toEqual({
+      inviteCode: mockInviteResult().inviteCode,
+      status: 'used',
+      expiration: expirationDate,
+      usedAt: currentDate,
+      emailUser: mockInviteResult().emailUser,
+      phoneUser: mockInviteResult().phoneUser,
+      inviteType: 'standart',
+      maxUses: 2
+    })
+  })
+  jest.restoreAllMocks()
 })
