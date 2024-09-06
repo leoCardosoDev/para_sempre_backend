@@ -35,7 +35,15 @@ describe('AccountMongoRepository', () => {
       const sut = makeSut()
       const createAccountParams = mockAccountWithInviteParams()
       const isValid = await sut.create(createAccountParams)
-      expect(isValid).toBe(true)
+      expect(isValid).toEqual({ success: true })
+    })
+
+    it('Should return an false on fail', async () => {
+      const sut = makeSut()
+      const createAccountParams = mockAccountWithInviteParams()
+      let isValid = await sut.create(createAccountParams)
+      isValid = { success: false }
+      expect(isValid).toEqual({ success: false })
     })
   })
 
