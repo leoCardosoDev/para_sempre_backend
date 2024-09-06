@@ -1,6 +1,6 @@
 import { DbCreateAccountWithInvite } from '@/application/usecases'
 import { mockAccountWithInviteParams, throwError } from '@/tests/domain/mocks'
-import { CheckEmailRepositorySpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
+import { CheckEmailRepositorySpy, HasherSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 
 const mockInviteResult = () => ({
   inviteId: 'any_invite_id',
@@ -17,13 +17,15 @@ type SutTypes = {
   sut: DbCreateAccountWithInvite
   loadInviteByCodeRepository: LoadInviteByCodeRepositorySpy
   checkEmailRepositorySpy: CheckEmailRepositorySpy
+  hasherSpy: HasherSpy
 }
 
 const makeSut = (): SutTypes => {
   const loadInviteByCodeRepository = new LoadInviteByCodeRepositorySpy()
   const checkEmailRepositorySpy = new CheckEmailRepositorySpy()
-  const sut = new DbCreateAccountWithInvite(loadInviteByCodeRepository, checkEmailRepositorySpy)
-  return { sut, loadInviteByCodeRepository, checkEmailRepositorySpy }
+  const hasherSpy = new HasherSpy()
+  const sut = new DbCreateAccountWithInvite(loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy)
+  return { sut, loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy }
 }
 
 describe('DbCreateAccountWithInvite Usecases', () => {
@@ -85,5 +87,13 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     jest.spyOn(checkEmailRepositorySpy, 'checkByEmail').mockReturnValueOnce(new Promise(resolve => resolve(true)))
     const result = await sut.create(addParams)
     expect(result).toEqual({ success: false, error: 'Email already registered' })
+  })
+
+  it('Should call Hasher with correct plaintext', async () => {
+    const { sut, loadInviteByCodeRepository, hasherSpy } = makeSut()
+    const addParams = { ...mockAccountWithInviteParams(), email: 'same_email@mail.com' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'same_email@mail.com' })
+    await sut.create(addParams)
+    expect(hasherSpy.plaintext).toBe(addParams.password)
   })
 })
