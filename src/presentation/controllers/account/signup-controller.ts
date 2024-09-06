@@ -1,11 +1,11 @@
 import { Controller, HttpResponse, Validation } from '@/presentation/protocols'
 import { badRequest, serverError, ok, forbidden } from '@/presentation/helpers'
-import { EmailInUseError } from '@/presentation/errors'
-import { CreateAccount, Authentication } from '@/domain/usecases'
+import { CreateAccountWithInvite, Authentication } from '@/domain/usecases'
+import { CustomError } from '@/presentation/errors/custom-error'
 
 export class SignUpController implements Controller {
   constructor(
-    private readonly _createAccount: CreateAccount,
+    private readonly _createAccount: CreateAccountWithInvite,
     private readonly _validation: Validation,
     private readonly _authentication: Authentication
   ) {}
@@ -16,14 +16,17 @@ export class SignUpController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { name, email, password } = _request
-      const isValid = await this._createAccount.create({
+      const { name, email, password, inviteCode } = _request
+      const result = await this._createAccount.create({
         name,
         email,
-        password
+        password,
+        inviteCode
       })
-      if (!isValid) {
-        return forbidden(new EmailInUseError())
+      if (!result.success) {
+        const errorMessages = result.error
+        const errorMessage = errorMessages && errorMessages.length > 0 ? errorMessages[0] : 'Unknown error'
+        return forbidden(new CustomError(errorMessage))
       }
       const authenticationModel = await this._authentication.auth({
         email,
@@ -41,4 +44,5 @@ export type SignUpControllerRequest = {
   email: string
   password: string
   passwordConfirmation: string
+  inviteCode: string
 }
