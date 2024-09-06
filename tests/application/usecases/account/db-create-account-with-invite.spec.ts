@@ -1,6 +1,6 @@
 import { DbCreateAccountWithInvite } from '@/application/usecases'
 import { mockAccountWithInviteParams, throwError } from '@/tests/domain/mocks'
-import { CheckEmailRepositorySpy, HasherSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
+import { CheckEmailRepositorySpy, CreateAccountWithInviteRepositorySpy, HasherSpy, LoadInviteByCodeRepositorySpy } from '@/tests/application/mocks'
 
 const mockInviteResult = () => ({
   inviteId: 'any_invite_id',
@@ -18,14 +18,16 @@ type SutTypes = {
   loadInviteByCodeRepository: LoadInviteByCodeRepositorySpy
   checkEmailRepositorySpy: CheckEmailRepositorySpy
   hasherSpy: HasherSpy
+  createAccountWithInviteRepositorySpy: CreateAccountWithInviteRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const loadInviteByCodeRepository = new LoadInviteByCodeRepositorySpy()
   const checkEmailRepositorySpy = new CheckEmailRepositorySpy()
   const hasherSpy = new HasherSpy()
-  const sut = new DbCreateAccountWithInvite(loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy)
-  return { sut, loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy }
+  const createAccountWithInviteRepositorySpy = new CreateAccountWithInviteRepositorySpy()
+  const sut = new DbCreateAccountWithInvite(loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy, createAccountWithInviteRepositorySpy)
+  return { sut, loadInviteByCodeRepository, checkEmailRepositorySpy, hasherSpy, createAccountWithInviteRepositorySpy }
 }
 
 describe('DbCreateAccountWithInvite Usecases', () => {
@@ -104,5 +106,18 @@ describe('DbCreateAccountWithInvite Usecases', () => {
     jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'same_email@mail.com' })
     const promise = sut.create(addParams)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call CreateAccountWithInviteRepository with correct values', async () => {
+    const { sut, loadInviteByCodeRepository, createAccountWithInviteRepositorySpy, hasherSpy } = makeSut()
+    const addParams = { ...mockAccountWithInviteParams(), email: 'same_email@mail.com' }
+    jest.spyOn(loadInviteByCodeRepository, 'loadByCode').mockResolvedValueOnce({ ...mockInviteResult(), emailUser: 'same_email@mail.com' })
+    await sut.create(addParams)
+    expect(createAccountWithInviteRepositorySpy.params).toEqual({
+      name: addParams.name,
+      email: addParams.email,
+      password: hasherSpy.digest,
+      inviteCode: addParams.inviteCode
+    })
   })
 })

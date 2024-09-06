@@ -1,4 +1,7 @@
 import {
+  CreateAccountWithInviteRepository,
+  CreateAccountWithInviteRepositoryParams,
+  CreateAccountWithInviteRepositoryResult,
   LoadAccountByEmailRepository,
   LoadAccountByEmailRepositoryResult,
   LoadAccountByTokenRepository,
@@ -7,6 +10,20 @@ import {
 } from '@/application/protocols'
 
 import { faker } from '@faker-js/faker'
+
+export class CreateAccountWithInviteRepositorySpy implements CreateAccountWithInviteRepository {
+  params: CreateAccountWithInviteRepositoryParams
+  result = {
+    success: true,
+    inviteId: faker.string.uuid(),
+    error: undefined
+  }
+
+  async create(data: CreateAccountWithInviteRepositoryParams): Promise<CreateAccountWithInviteRepositoryResult> {
+    this.params = data
+    return this.result
+  }
+}
 export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
   email: string
   result: { id: string; name: string; password: string } | null = {
