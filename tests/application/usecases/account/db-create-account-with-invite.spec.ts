@@ -125,7 +125,8 @@ describe('DbCreateAccountWithInvite Usecases', () => {
       name: addParams.name,
       email: addParams.email,
       password: hasherSpy.digest,
-      inviteId: loadInviteByCodeRepository.inviteId
+      inviteId: loadInviteByCodeRepository.inviteId,
+      status: 'pending'
     })
   })
 

@@ -21,7 +21,8 @@ export class SignUpController implements Controller {
         name,
         email,
         password,
-        inviteCode
+        inviteCode,
+        status: 'pending'
       })
       if (!result.success) {
         const errorMessages = result.error

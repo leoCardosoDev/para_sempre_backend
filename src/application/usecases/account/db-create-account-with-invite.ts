@@ -27,7 +27,8 @@ export class DbCreateAccountWithInvite implements CreateAccountWithInvite {
       name: accountData.name,
       email: accountData.email,
       password: hashedPassword,
-      inviteId: invite.inviteId
+      inviteId: invite.inviteId,
+      status: 'pending'
     }
     const createResult = await this._createAccountWithInviteRepository.create(accountDataWithoutInviteCode)
     if (createResult.success) {

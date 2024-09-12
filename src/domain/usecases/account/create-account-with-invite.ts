@@ -8,6 +8,7 @@ export type CreateAccountWithInviteParams = {
   password: string
   inviteCode: string
   inviteId?: string
+  status: 'pending' | 'active' | 'desactive'
 }
 
 export type CreateAccountWithInviteResult = {

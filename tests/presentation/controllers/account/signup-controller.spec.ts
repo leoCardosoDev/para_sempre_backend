@@ -53,7 +53,8 @@ describe('SignUp Controller', () => {
       name: request.name,
       email: request.email,
       password: request.password,
-      inviteCode: request.inviteCode
+      inviteCode: request.inviteCode,
+      status: 'pending'
     })
   })
 
